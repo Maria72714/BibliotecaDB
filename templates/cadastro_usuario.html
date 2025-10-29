@@ -3,7 +3,22 @@
 {%block title%} Cadastro {%endblock%}
 
 {%block conteudo%}
-
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
     <h1>Cadastro de Usuário</h1>
+    
+    <form action="" method="post">
+        <label for="nome">Nome</label>    
+        <input id="nome" name="nome" type="nome">
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email" required placeholder="seu@exemplo.com" value="{{ request.form.email or '' }}">
+        <label for="numero_telefone">Telefone</label>
+        <input id="numero_telefone" name="numero_telefone"type="text">
+        <label for="data_inscricao">Data da inscrição</label>
+        <input id="data_inscricao" name="data_inscricao"type="text">
+       <label for="multa_atual">Multa atual</label>
+        <input id="multa_atual" name="multa_atual"type="text">
+        
+        <button type="submit">Enviar</button>
+    </form>
     
 {%endblock%}
