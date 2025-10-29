@@ -13,3 +13,11 @@ class User(Base):
     numero_telefone:Mapped[str] = mapped_column(VARCHAR(15), nullable=False)
     data_inscricao:Mapped[date] = mapped_column(Date, nullable=False)
     multa_atual:Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=True)
+
+class Autores(Base):
+    __tablename__ = 'autores'
+    id_autor:Mapped[int] = mapped_column(Integer AUTO_INCREMENT PRIMARY KEY
+    nome_autor:Mapped[str] = mapped_column(VARCHAR(255))
+    nacionalidade VARCHAR(255)
+    data_nascimento:Mapped[date] = mapped_column(DATE)
+    biografia:Mapped[str] TEXT
