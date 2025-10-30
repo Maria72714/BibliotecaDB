@@ -42,7 +42,7 @@ def login():
         with Session(bind = engine) as sessao:
             usuario = sessao.query(User).filter_by(email = email, senha = senha)
             if usuario:
-                return redirect(url_for('index'))
+                return redirect(url_for('cadastro_livro'))
     return render_template('login.html')
 
 @app.route('/cadastro_livro')
