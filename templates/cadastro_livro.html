@@ -3,8 +3,27 @@
 {%block title%} Cadastrar_Livro {%endblock%}
 
 {%block conteudo%}
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/livro.css') }}"">
     <h1>Cadastrar Livro</h1>
+    <form action="{{ url_for('cadastro_livro' ) }}" method="post">
+        <label for="titulo">Título</label>    
+        <input id="titulo" name="titulo" type="text">
+        <label for="autor">Autor</label>
+        <input id="autor" name="autor" type="text">
+        <label for="isbn">ISBN</label>
+        <input id="isbn" name="isbn" type="text">
+        <label for="ano_publicacao">Ano de Publicação</label>
+        <input id="ano_publicacao" name="ano_publicacao" type="date">
+        <label for="genero">Gênero</label>
+        <input id="genero" name="genero" type="text">
+        <label for="editora">Editora</label>
+        <input id="editora" name="editora" type="text">
+        <label for="qtd_disponivel">Disponível</label>
+        <input id="qtd_disponivel" name="qtd_disponivel" type="number">
+        <label for="resumo">Resumo</label>
+        <input id="resumo" name="resumo" type="text">
 
+        <button type="submit">Enviar</button>
+    </form>
 
 {%endblock%}

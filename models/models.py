@@ -5,7 +5,7 @@ from flask_login import UserMixin
 
 engine = create_engine('mysql://root:@localhost/db_atividade17')
 
-Base = declarative_base()
+Base = declarative_base() 
 
 class User(Base,UserMixin):
     __tablename__ = 'usuarios'
@@ -13,7 +13,7 @@ class User(Base,UserMixin):
     id_user:Mapped[int] = mapped_column(Integer, primary_key=True)
     Nome_usuario:Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
     email:Mapped[str] = mapped_column(VARCHAR(255), nullable=False, unique=True)
-    senha : Mapped[int] = mapped_column(VARCHAR(60), nullable= False)
+    senha:Mapped[int] = mapped_column(VARCHAR(60), nullable= False)
     Numero_telefone:Mapped[str] = mapped_column(VARCHAR(15), nullable=False)
     data_inscricao:Mapped[date] = mapped_column(Date, nullable=False)
     multa_atual:Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=True)
@@ -24,6 +24,7 @@ class User(Base,UserMixin):
             obj = sessao.query(User).where(User.id_user == user_id).first()
             sessao.close()
             return obj
+        
 class Autores(Base):
     __tablename__ = 'autores'
     id_autor:Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -70,7 +71,5 @@ class Emprestimos(Base):
     Data_devolucao_real:Mapped[date] = mapped_column(Date, nullable=True)
     Status_emprestimo:Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
 
-if __name__ == "__main__":
 
-    Base.metadata.create_all(engine)
   
