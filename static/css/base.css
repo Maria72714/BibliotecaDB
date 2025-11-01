@@ -41,7 +41,9 @@ nav {
     margin-bottom: 100px;
 }
 nav h2{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgb(20, 113, 8);
+    letter-spacing: 1px;
 }
 
 a:hover{

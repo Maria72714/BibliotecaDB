@@ -48,7 +48,7 @@ class Livro(Base):
     id_livro:Mapped[int] = mapped_column(Integer,primary_key=True)
     Titulo:Mapped[str] = mapped_column(VARCHAR(255),nullable=False)
     Autor_id: Mapped[int] = mapped_column(Integer,ForeignKey('autores.id_autor'))
-    Autor = relationship("Autor") 
+    Autor = relationship("Autores") 
     ISBN:Mapped[str] = mapped_column(VARCHAR(13),nullable=False)
     Ano_publicacao:Mapped[int] = mapped_column(Integer)
     Genero_id: Mapped[int] = mapped_column(Integer,ForeignKey('generos.id_genero'))
