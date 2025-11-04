@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash 
-from models.models import engine
+from configs.configs import engine
 from sqlalchemy import text
 
 
@@ -50,17 +50,15 @@ def cadastro_usuario():
         data = request.form["data_inscricao"]
         multa = request.form["multa_atual"]
         
-        
         senha_hash = generate_password_hash(senha)
         with engine.connect() as conn:
             query = text(f'''
                          INSERT INTO USUARIOS
                          VALUES (DEFAULT, {nome}, {email}, {senha_hash}, {telefone}, {data}, {multa})
                          ''')
-        
             conn.execute(query)
             conn.commit()
-            return redirect(url_for('login'))
+        return redirect(url_for('login'))
 
     return render_template('cadastro_usuario.html')
 
@@ -70,8 +68,12 @@ def login():
         email = request.form['email']
         senha = request.form['senha']
 
-        with Session(bind = engine) as sessao:
-            usuario = sessao.query(User).filter_by(email=email).first()
+        with engine.connect() as conn:
+            query = text(f'''
+                    SELECT email, senha FROM Usuarios
+                    WHERE email = {email}
+                ''')
+            usuario = conn.execute(query).fetchone()
             if usuario and check_password_hash(usuario.senha, senha):
                 login_user(usuario)
                 return redirect(url_for('cadastro_livro'))
@@ -87,3 +89,4 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
+    app.run(debug=True)
