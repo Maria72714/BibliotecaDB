@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash 
-from models.models import engine, User, Base
-from sqlalchemy.orm import Session
+from models.models import engine
+from sqlalchemy import text
 
 
 app = Flask(__name__)
@@ -12,10 +12,29 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+@classmethod
+def get(cls, user_id):
+    with engine.connect() as conn:
+        obj = conn.execute(text(f'SELECT * FROM Usuarios WHERE ID_usuario = {user_id}'))
+        return obj
+
 @login_manager.user_loader
 def load_user(user_id):
-    with Session(bind=engine) as sessao:
-        return sessao.query(User).get(int(user_id))
+    query = text("""
+        SELECT id, nome, email, senha
+        FROM usuarios
+        WHERE id = :user_id
+        LIMIT 1
+    """)
+
+    with engine.connect() as conn:
+        result = conn.execute(query, {"user_id": user_id})
+        row = result.fetchone()
+
+        if row:
+            return dict(row._mapping)
+        else:
+            return None
 
 @app.route('/')
 def index():
@@ -31,18 +50,16 @@ def cadastro_usuario():
         data = request.form["data_inscricao"]
         multa = request.form["multa_atual"]
         
+        
         senha_hash = generate_password_hash(senha)
-        with Session(bind = engine) as sessao:
-            usuario = User(Nome_usuario = nome,
-                           email = email,
-                           senha = senha_hash,
-                           Numero_telefone = telefone, 
-                           data_inscricao = data, 
-                           multa_atual = multa)
-            
-            sessao.add(usuario)
-            sessao.commit()
-            sessao.close()
+        with engine.connect() as conn:
+            query = text(f'''
+                         INSERT INTO USUARIOS
+                         VALUES (DEFAULT, {nome}, {email}, {senha_hash}, {telefone}, {data}, {multa})
+                         ''')
+        
+            conn.execute(query)
+            conn.commit()
             return redirect(url_for('login'))
 
     return render_template('cadastro_usuario.html')
@@ -70,5 +87,3 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
-
-    Base.metadata.create_all(engine)
