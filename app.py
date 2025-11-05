@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash 
 from configs.engine import engine
-from sqlalchemy import text 
+from sqlalchemy import text
 
 
 app = Flask(__name__)
@@ -12,29 +12,28 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-@classmethod
-def get(cls, user_id):
-    with engine.connect() as conn:
-        obj = conn.execute(text(f'SELECT * FROM Usuarios WHERE ID_usuario = {user_id}'))
-        return obj
+class User(UserMixin):
+    def __init__(self, id, nome=None, email=None, senha=None):
+        self.id = str(id) if id is not None else None
+        self.nome = nome
+        self.email = email
+        self.senha = senha
 
+    @classmethod
+    def get_by_id(cls, user_id):
+        with engine.connect() as conn:
+            result = conn.execute(
+                text("SELECT ID_usuario, Nome_usuario, Email, Senha FROM Usuarios WHERE ID_usuario = :id"),
+                {"id": user_id}
+            ).fetchone()
+
+            if result:
+                return cls(*result)
+            return None
+            
 @login_manager.user_loader
 def load_user(user_id):
-    query = text("""
-        SELECT id, nome, email, senha
-        FROM usuarios
-        WHERE id = :user_id
-        LIMIT 1
-    """)
-
-    with engine.connect() as conn:
-        result = conn.execute(query, {"user_id": user_id})
-        row = result.fetchone()
-
-        if row:
-            return dict(row._mapping)
-        else:
-            return None
+    return User.get_by_id(user_id)
 
 @app.route('/')
 def index():
@@ -77,14 +76,15 @@ def login():
 
         with engine.connect() as conn:
             query = text("""
-                    SELECT Email, Senha FROM Usuarios
+                    SELECT ID_usuario, Email, Senha FROM Usuarios
                     WHERE Email = :email
                     """)
             result = conn.execute(query, {"email": email})
             usuario = result.fetchone()
             
             if usuario and check_password_hash(usuario.Senha, senha):
-                login_user(usuario)
+                user = User.get_by_id(usuario.ID_usuario)
+                login_user(user)
                 return redirect(url_for('cadastro_livro'))
             
             flash('Email ou senha inválidos')
@@ -92,6 +92,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/cadastro_livro')
+@login_required
 def cadastro_livro():
     return render_template('cadastro_livro.html')
 
