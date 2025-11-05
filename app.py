@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash 
-from configs.configs import engine
-from sqlalchemy import text
+from configs.engine import engine
+from sqlalchemy import text 
 
 
 app = Flask(__name__)
@@ -52,11 +52,18 @@ def cadastro_usuario():
         
         senha_hash = generate_password_hash(senha)
         with engine.connect() as conn:
-            query = text(f'''
-                         INSERT INTO USUARIOS
-                         VALUES (DEFAULT, {nome}, {email}, {senha_hash}, {telefone}, {data}, {multa})
-                         ''')
-            conn.execute(query)
+            query = text("""
+                         INSERT INTO Usuarios (ID_usuario, Nome_usuario, Email, Senha, Numero_telefone, Data_inscricao, Multa_atual)
+                         VALUES (DEFAULT, :nome, :email, :senha_hash, :telefone, :data, :multa)
+                         """)
+            conn.execute(query, {
+                "nome": nome,
+                "email": email,
+                "senha_hash": senha_hash,
+                "telefone": telefone,
+                "data": data,
+                "multa": multa
+            })
             conn.commit()
         return redirect(url_for('login'))
 
@@ -69,14 +76,19 @@ def login():
         senha = request.form['senha']
 
         with engine.connect() as conn:
-            query = text(f'''
-                    SELECT email, senha FROM Usuarios
-                    WHERE email = {email}
-                ''')
-            usuario = conn.execute(query).fetchone()
-            if usuario and check_password_hash(usuario.senha, senha):
+            query = text("""
+                    SELECT Email, Senha FROM Usuarios
+                    WHERE Email = :email
+                    """)
+            result = conn.execute(query, {"email": email})
+            usuario = result.fetchone()
+            
+            if usuario and check_password_hash(usuario.Senha, senha):
                 login_user(usuario)
                 return redirect(url_for('cadastro_livro'))
+            
+            flash('Email ou senha inválidos')
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 @app.route('/cadastro_livro')
@@ -90,3 +102,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
