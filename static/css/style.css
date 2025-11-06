@@ -2,3 +2,11 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.landpage {
+    margin-left: 40px;
+    background-color: white;
+    width: 400px;
+    height: 600px;
+    border-radius: 10px;
+    margin-bottom: 80px;
+}
