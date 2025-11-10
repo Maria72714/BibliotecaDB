@@ -52,7 +52,7 @@ def cadastro_usuario():
         senha_hash = generate_password_hash(senha)
         with engine.connect() as conn:
             query = text("""
-                         INSERT INTO Usuarios (ID_usuario, Nome_usuario, Email, Senha, Numero_telefone, Data_inscricao, Multa_atual)
+                         INSERT INTO Usuarios
                          VALUES (DEFAULT, :nome, :email, :senha_hash, :telefone, :data, :multa)
                          """)
             conn.execute(query, {
