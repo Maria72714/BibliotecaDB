@@ -91,10 +91,129 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html')
 
-@app.route('/cadastro_livro')
+@app.route('/cadastro_livro', methods=['POST', 'GET'])
 @login_required
 def cadastro_livro():
+    if request.method == 'POST':
+        titulo = request.form['titulo']
+        autor = request.form['autor']
+        isbn = request.form['isbn']
+        ano_publicacao = request.form['ano_publicacao']
+        genero = request.form['genero']
+        editora = request.form['editora']
+        quantidade = request.form['qtd_disponivel'] 
+        resumo = request.form['resumo']
+
+        with engine.connect() as conn:
+            query_editora = text("""
+                SELECT ID_editora FROM Editoras
+                WHERE Nome_editora = :editora
+            """)
+
+            query_genero = text("""
+                SELECT ID_genero FROM Generos
+                WHERE Nome_genero = :genero
+            """)
+
+            query_autor = text("""
+                SELECT ID_autor from Autores
+                WHERE Nome_autor = :autor
+            """)
+
+            query = text("""
+                INSERT INTO Livros
+                VALUES (
+                      DEFAULT,
+                      :titulo, 
+                      :autor, 
+                      :isbn, 
+                      :publicacao, 
+                      :genero,
+                      :editora,
+                      :quantidade,
+                      :resumo
+                      )
+            """)
+
+            editora_id = conn.execute(query_editora, {"editora": editora}).scalar()
+            genero_id = conn.execute(query_genero, {"genero": genero}).scalar()
+            autor_id = conn.execute(query_autor, {"autor": autor}).scalar()
+
+            if not editora_id:
+                return redirect(url_for('cadastro_editora'))
+            elif not genero_id:
+                 return redirect(url_for('cadastro_genero'))
+            elif not autor_id:
+                return redirect(url_for('cadastro_autor'))
+            else:
+                conn.execute(query, {
+                    'titulo': titulo,
+                    'autor': autor_id,
+                    'isbn': isbn,
+                    'publicacao': ano_publicacao,
+                    'genero': genero_id,
+                    'editora': editora_id,
+                    'quantidade': quantidade,
+                    'resumo': resumo
+                })
+                conn.commit()
+        return redirect(url_for('index'))
     return render_template('cadastro_livro.html')
+
+@app.route('/cadastro_autor', methods=['POST', 'GET'])
+@login_required
+def cadastro_autor():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        nacionalidade = request.form['nacionalidade']
+        data_nascimento = request.form['data_nascimento']
+        biografia = request.form['biografia']
+
+        with engine.connect() as conn:
+            sql = text("""
+                INSERT INTO Autores 
+                VALUES(DEFAULT, :nome, :nacionalidade, :nascimento, :biografia)
+            """)
+            conn.execute(sql, {'nome': nome,
+                               'nacionalidade': nacionalidade,
+                               'nascimento': data_nascimento, 
+                               'biografia': biografia})
+            conn.commit()
+            return redirect(url_for('cadastro_livro'))
+    return render_template('cadastro_autor.html')
+
+@app.route('/cadastro_genero', methods=['POST', 'GET'])
+@login_required
+def cadastro_genero():
+    if request.method == 'POST':
+        genero = request.form['nome']
+
+        with engine.connect() as conn:
+            sql = text("""
+                INSERT INTO Generos 
+                VALUES(DEFAULT, :genero)
+            """)
+            conn.execute(sql, {'genero': genero})
+            conn.commit()
+        return redirect(url_for('cadastro_livro'))
+    return render_template('cadastro_genero.html')
+
+@app.route('/cadastro_editora', methods=['POST', 'GET'])
+@login_required
+def cadastro_editora():
+    if request.method == 'POST':
+        editora = request.form['nome']
+        endereco = request.form['endereco']
+
+        with engine.connect() as conn:
+            sql = text("""
+                INSERT INTO Editoras 
+                VALUES(DEFAULT, :editora, :endereco)
+            """)
+            conn.execute(sql, {'editora': editora, 'endereco': endereco})
+            conn.commit()
+        return redirect(url_for('cadastro_livro'))
+    return render_template('cadastro_editora.html')
 
 @app.route('/logout')
 def logout():
@@ -103,4 +222,3 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    

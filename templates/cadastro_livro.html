@@ -5,17 +5,17 @@
 {%block conteudo%}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/livro.css') }}"">
     <h1>Cadastrar Livro</h1>
-    <div class="content">
-        <form action="{{ url_for('cadastro_livro' ) }}" method="post">
+    <form action="{{ url_for('cadastro_livro' ) }}" method="post">
+        <div class="content">
             <div class="form1">
-                <label for="titulo">Título</label>    
+                <label for="titulo">Título</label>
                 <input id="titulo" name="titulo" type="text">
                 <label for="autor">Autor</label>
                 <input id="autor" name="autor" type="text">
                 <label for="isbn">ISBN</label>
                 <input id="isbn" name="isbn" type="text">
                 <label for="ano_publicacao">Ano de Publicação</label>
-                <input id="ano_publicacao" name="ano_publicacao" type="date">
+                <input id="ano_publicacao" name="ano_publicacao" type="number"> 
             </div>
             <div class="form2">
                 <label for="genero">Gênero</label>
@@ -27,8 +27,8 @@
                 <label for="resumo">Resumo</label>
                 <input id="resumo" name="resumo" type="text">
             </div>
-        </form>
+        </div>
         <button type="submit">Enviar</button>
-    </div>
+    </form>
 
 {%endblock%}
