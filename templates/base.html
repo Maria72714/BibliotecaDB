@@ -13,6 +13,7 @@
             <h2>📚 Biblioteca</h2>
             <ul>
                 <li><a href="{{ url_for('index') }}">Início</a></li>
+                <li><a href="{{ url_for('listar_livros') }}">Livros</a></li>
                 <li><a href="{{ url_for('cadastro_livro') }}">Cadastrar Livro</a></li>
                 {% if not current_user.is_authenticated %}
                 <li><a href="{{ url_for('login') }}">Login</a></li>

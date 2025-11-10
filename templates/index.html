@@ -5,16 +5,17 @@
 {%block conteudo%}
 <main>
  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<div class="inicial">
-    <div class="content">
-    <h1>Bem-vindo à Biblioteca da Macacada</h1>
-    <p>Sistema de gerenciamento de biblioteca digital</p>
+<section class="inicial hero">
+  <div class="content">
+    <h1>Bem-vindo à Biblioteca</h1>
+    <p>Gerencie livros, autores, editoras e gêneros em um só lugar.</p>
+    <div class="actions">
+      <a class="btn primary" href="{{ url_for('listar_livros') }}">Ver todos os livros</a>
+      <a class="btn" href="{{ url_for('cadastro_livro') }}">Cadastrar livro</a>
     </div>
-
-    <img src="{{ url_for('static', filename='img/image.png') }}" alt="Imagem de Biblioteca" class="imagem-biblioteca">
-</div>
-<div class="landpage">
-    
-</div>
+  </div>
+  <img src="{{ url_for('static', filename='img/image.png') }}" alt="Imagem de Biblioteca" class="imagem-biblioteca">
+</section>
+<div class="landpage"></div>
 </main>
 {%endblock%}

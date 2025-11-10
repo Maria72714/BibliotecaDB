@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Livros{% endblock %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tabela.css') }}">
+<div class="pagina-lista">
+  <h1>Livros cadastrados</h1>
+  {% if not livros %}
+    <p>Nenhum livro encontrado. Você pode <a href="{{ url_for('cadastro_livro') }}">cadastrar um novo livro</a>.</p>
+  {% else %}
+    <div class="tabela-wrapper">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>ISBN</th>
+            <th>Ano</th>
+            <th>Gênero</th>
+            <th>Editora</th>
+            <th>Qtd</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in livros %}
+          <tr>
+            <td>{{ l.ID_livro }}</td>
+            <td class="col-titulo" title="{{ l.Resumo }}">{{ l.Titulo }}</td>
+            <td>{{ l.Autor }}</td>
+            <td>{{ l.ISBN }}</td>
+            <td>{{ l.Ano_publicacao }}</td>
+            <td>{{ l.Genero }}</td>
+            <td>{{ l.Editora }}</td>
+            <td>{{ l.Qtd }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  {% if rows and headers %}
+    <h2 style="margin-top:20px">Todos os campos (visão completa)</h2>
+    <div class="tabela-wrapper">
+      <table class="tabela">
+        <thead>
+          <tr>
+            {% for h in headers %}
+              <th>{{ h }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              {% for h in headers %}
+                <td>{{ r[h] if h in r._mapping else '' }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
