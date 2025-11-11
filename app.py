@@ -100,8 +100,13 @@ def editar_editoras(id):
 @login_required
 def deletar_editoras(id):
     with engine.connect() as conn:
-        conn.execute(text("DELETE FROM Editoras WHERE ID_editora = :id"), {"id": id})
-        conn.commit()
+        try:
+            conn.execute(text("DELETE FROM Editoras WHERE ID_editora = :id"), {"id": id})
+            conn.commit()
+        except Exception as e:
+            flash(f"Erro de integridade {e}")
+        finally:
+            conn.close()
     return redirect(url_for('listar_editoras'))
 
 @app.route('/cadastro', methods = ['POST','GET'])
@@ -275,8 +280,13 @@ def editar_livro(id):
 @login_required
 def deletar_livro(id):
     with engine.connect() as conn:
-        conn.execute(text("DELETE FROM Livros WHERE ID_livro = :id"), {"id": id})
-        conn.commit()
+        try:
+            conn.execute(text("DELETE FROM Livros WHERE ID_livro = :id"), {"id": id})
+            conn.commit()
+        except Exception as e:
+            flash(f"Erro de integridade {e}")
+        finally:
+            conn.close()
     return redirect(url_for('listar_livros'))
 
 @app.route('/cadastro_autor', methods=['POST', 'GET'])
@@ -351,8 +361,13 @@ def listar_generos():
 @login_required
 def deletar_genero(id):
     with engine.connect() as conn:
-        conn.execute(text("DELETE FROM Generos WHERE ID_genero = :id"), {"id": id})
-        conn.commit()
+        try:
+            conn.execute(text("DELETE FROM Generos WHERE ID_genero = :id"), {"id": id})
+            conn.commit()
+        except Exception as e:
+            flash(f"Erro de integridade {e}")
+        finally:
+            conn.close()
     return redirect(url_for('listar_generos'))
 
 @app.route('/editar_genero/<int:id>', methods=['GET', 'POST'])
@@ -419,8 +434,13 @@ def editar_autor(id):
 @login_required
 def deletar_autor(id):
     with engine.connect() as conn:
-        conn.execute(text("DELETE FROM Autores WHERE ID_autor = :id"), {"id": id})
-        conn.commit()
+        try:
+            conn.execute(text("DELETE FROM Autores WHERE ID_autor = :id"), {"id": id})
+            conn.commit()
+        except Exception as e:
+            flash(f"Erro de integridade {e}")
+        finally:
+            conn.close()
     return redirect(url_for('lista_autores'))
 
 
