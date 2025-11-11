@@ -1,4 +1,4 @@
-# BibliotecaD
+# BibliotecaDB
 
 **Trabalho de Banco de Dados** 
 

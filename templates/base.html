@@ -10,9 +10,12 @@
   
     <div class="conteiner">
         <nav>
-            <h2>📚 Biblioteca</h2>
+            <h2><a href="{{ url_for('index' ) }}" class="logo">📚 Biblioteca</a></h2>
             <ul>
-                <li><a href="{{ url_for('index') }}">Início</a></li>
+                <li><a href="{{ url_for('listar_emprestimos') }}">Empréstimo</a></li>
+                <li><a href="{{ url_for('lista_autores') }}">Autores</a></li>
+                <li><a href="{{ url_for('listar_editoras') }}">Editoras</a></li>
+                <li><a href="{{ url_for('listar_generos') }}">Gêneros</a></li>
                 <li><a href="{{ url_for('listar_livros') }}">Livros</a></li>
                 <li><a href="{{ url_for('cadastro_livro') }}">Cadastrar Livro</a></li>
                 {% if not current_user.is_authenticated %}
@@ -30,7 +33,7 @@
             </div>
         </main>
         <footer>
-            <p>&copy; 2025 Biblioteca.</p>
+            <p>&copy; 2025 Biblioteca. Todos os direitos reservados.</p>
         </footer>
     </div>
    

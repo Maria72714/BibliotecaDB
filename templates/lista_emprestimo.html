@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Emprestimos{% endblock %}
+
+{% block conteudo %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/listar_editora.css') }}">
+
+<div class="pagina-lista">
+  <h1>Listar Emprestimo</h1>
+
+  <div class="tabela-wrapper">
+    <table class="tabela">
+      <thead>
+        <tr>
+            <th>ID Emprestimo</th>
+            <th>Nome</th>
+            <th>Endereço</th>
+            <th>Ações</th>
+        </tr>
+      </thead>
+        <tbody>
+            {% for emprestimo in emprestimos %}
+            <tr>
+            <td>{{ emprestimo.ID_emprestimo }}</td>
+            <td>{{ emprestimo.Nome }}</td>
+            <td>{{ emprestimo.Endereco }}</td>
+            <td class="acoes">
+                <a href="{{ url_for('editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">Editar</a>
+                <a href="{{ url_for('deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
+            </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}
+
+

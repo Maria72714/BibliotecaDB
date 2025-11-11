@@ -3,7 +3,7 @@
 {%block title%} Cadastrar_Livro {%endblock%}
 
 {%block conteudo%}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/livro.css') }}"">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/livro.css') }}">
     <h1>Cadastrar Livro</h1>
     <form action="{{ url_for('cadastro_livro' ) }}" method="post">
         <div class="content">
@@ -26,6 +26,7 @@
                 <input id="qtd_disponivel" name="qtd_disponivel" type="number">
                 <label for="resumo">Resumo</label>
                 <input id="resumo" name="resumo" type="text">
+              
             </div>
         </div>
         <button type="submit">Enviar</button>

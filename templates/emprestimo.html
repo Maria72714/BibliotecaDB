@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Emprestimo{% endblock %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/listar_editora.css') }}">
+<h1>Empréstimo de Livro</h1>
+<form method="POST" action="{{ url_for('emprestar_livro', id=livro.ID_livro) }}">
+    <div class="form-group">
+        <label for="nome_usuario">Nome do Usuário:</label>
+        <input type="text" id="nome_usuario" name="nome_usuario" required>
+    </div>
+    <div class="form-group">
+        <label for="data_emprestimo">Data de Empréstimo:</label>
+        <input type="date" id="data_emprestimo" name="data_emprestimo" required>
+    </div>
+    <div class="form-group">
+        <label for="data_devolucao">Data de Devolução:</label>
+        <input type="date" id="data_devolucao" name="data_devolucao" required>
+    </div>
+    <button type="submit" class="btn-submit">Emprestar Livro</button>
+</form>
+
+{% endblock %}

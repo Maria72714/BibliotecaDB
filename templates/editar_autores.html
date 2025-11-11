@@ -1,0 +1,21 @@
+{% extends "base.html" %} 
+
+{%block title%} Editora {%endblock%}
+
+{%block conteudo%}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_livro.css') }}">
+ 
+    <h1>Editar Editora</h1>
+    <form action="{{ url_for('cadastro_autor', id=autores.ID_autor) }}" method="post">
+        <label for="nome">Nome</label>
+        <input id="nome" name="nome" type="text" placeholder="{{ autores.Nome_autor }}">
+        <label for="nacionalidade">Nacionalidade</label>
+        <input id="nacionalidade" name="nacionalidade"type="text" placeholder="{{ autores.Nacionalidade }}>
+        <label for="data_nascimento">Data de Nascimento</label>
+        <input type="date" name="data_nascimento" id="data_nascimento" placeholder="{{ autores.Data_nascimento }}">
+        <label for="biografia">Biografia</label>
+        <input type="text" name="biografia" id="biografia" placeholder="{{ autores.Biografia }}">
+        <button type="submit">Enviar</button>
+    </form>
+
+{%endblock%}

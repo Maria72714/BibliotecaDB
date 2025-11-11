@@ -1,19 +1,19 @@
-/* Estilos para a página de listagem de livros */
 .pagina-lista {
-  width: min(1200px, 92vw);
   margin: 40px auto;
-  text-align: left;
+  text-align: center;
 }
 
 .pagina-lista h1 {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 28px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: #2c3e50;
 }
 
 .tabela-wrapper {
   background: #ffffff;
+  width: min(1200px, 95%);
+  margin: 0 auto;
   border: 1px solid #e6edf3;
   border-radius: 10px;
   overflow-x: auto;
@@ -27,39 +27,57 @@
   font-size: 14px;
 }
 
+.tabela th,
+.tabela td {
+  text-align: center;
+  vertical-align: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f3f7;
+}
+
 .tabela thead th {
   background: #f5f7fb;
   color: #34495e;
   font-weight: 600;
-  text-align: left;
-  padding: 12px 14px;
-  border-bottom: 1px solid #e6edf3;
-  white-space: nowrap;
-}
-
-.tabela tbody td {
-  padding: 12px 14px;
-  border-bottom: 1px solid #f0f3f7;
 }
 
 .tabela tbody tr:hover {
   background: #fafcff;
 }
 
-.col-titulo {
-  max-width: 360px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+
+.btn-acao {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  margin: 0 3px;
 }
 
-@media (max-width: 720px) {
-  .tabela thead th:nth-child(1),
-  .tabela tbody td:nth-child(1),
-  .tabela thead th:nth-child(4),
-  .tabela tbody td:nth-child(4),
-  .tabela thead th:nth-child(8),
-  .tabela tbody td:nth-child(8) {
-    display: none;
-  }
+.btn-editar {
+  background-color: #007bff;
+}
+
+.btn-excluir {
+  background-color: #dc3545;
+}
+
+.btn-acao:hover {
+  opacity: 0.85;
+}
+
+
+.acoes {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.id {
+  text-decoration: none;
+  color: #34495e;
+  margin-right: 8px;
 }

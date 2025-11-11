@@ -1,0 +1,27 @@
+{% extends "base.html" %} 
+
+{%block title%} Cadastro {%endblock%}
+
+{%block conteudo%}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_livro.css') }}">
+    <h1>Editar Livro</h1>
+    
+    <form action="" method="post">
+        <div class="content">
+            <label for="titulo">Título</label>
+            <input id="titulo" name="titulo" type="text" placeholder="{{ livro.Titulo }} ">
+            <label for="isbn">ISBN</label>
+            <input id="isbn" name="isbn" type="text" placeholder="{{livro.ISBN}}">
+            <label for="ano_publicacao">Ano de Publicação</label>
+            <input id="ano_publicacao" name="ano_publicacao" type="number" placeholder="{{livro.Ano_publicacao}}">
+            <label for="qtd_disponivel">Disponível</label>
+            <input id="qtd_disponivel" name="qtd_disponivel" type="number" placeholder="{{livro.Quantidade_disponivel}}">
+            <label for="genero">Gênero</label>
+            <input type="text" name="genero" id="genero" placeholder="{{livro.Genero}}">
+            <label for="resumo">Resumo</label>
+            <input id="resumo" name="resumo" type="text" placeholder="{{livro.Resumo}}">
+        </div>
+        <button type="submit">Enviar</button>
+    </form>
+    
+{%endblock%}

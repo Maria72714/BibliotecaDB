@@ -69,6 +69,3 @@
   display: none;
 }
 
-@media (max-width: 920px) {
-  .hero { grid-template-columns: 1fr; }
-}

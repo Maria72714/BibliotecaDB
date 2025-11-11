@@ -1,0 +1,14 @@
+{% extends "base.html" %} 
+
+{%block title%} Genero {%endblock%}
+
+{%block conteudo%}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_livro.css') }}">
+
+    <h1>Editar genero</h1>
+    <form method="POST" action="{{ url_for('editar_genero', id=genero.ID_genero) }}">
+        <label for="nome_genero">Nome do gênero:</label>
+        <input type="text" id="nome_genero" name="nome_genero" placeholder="{{ genero.Nome_genero }}">
+        <button type="submit">Salvar</button>
+    </form>
+{%endblock%}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Autores{% endblock %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/listar_editora.css') }}">
+
+<div class="pagina-lista">
+  <h1>Autores Cadastrados</h1>
+
+  <div class="tabela-wrapper">
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Nacionalidade</th>
+          <th>Data Nascimento</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for autor in autores %}
+        <tr>
+          <td>{{ autor.ID_autor }}</td>
+          <td>{{ autor.Nome_autor }}</td>
+          <td>{{ autor.Nacionalidade }}</td>
+          <td>{{ autor.Data_nascimento }}</td>
+          <td class="acoes">
+            <a href="{{ url_for('editar_autor', id=autor.ID_autor) }}" class="btn-acao btn-editar">Editar</a>
+            <a href="{{ url_for('deletar_autor', id=autor.ID_autor) }}" class="btn-acao btn-excluir">Excluir</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
