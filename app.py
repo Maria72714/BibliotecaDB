@@ -121,20 +121,29 @@ def cadastro_usuario():
         
         senha_hash = generate_password_hash(senha)
         with engine.connect() as conn:
-            query = text("""
-                         INSERT INTO Usuarios
-                         VALUES (DEFAULT, :nome, :email, :senha_hash, :telefone, :data, :multa)
-                         """)
-            conn.execute(query, {
-                "nome": nome,
-                "email": email,
-                "senha_hash": senha_hash,
-                "telefone": telefone,
-                "data": data,
-                "multa": multa
-            })
-            conn.commit()
-        return redirect(url_for('login'))
+            sql = text("""
+                   SELECT * FROM Usuarios WHERE Email = :email
+                    """)
+            user = conn.execute(sql, {"email":email}).fetchone()
+            if user:
+                flash('Usuário já cadastrado')
+                return redirect(url_for('cadastro_usuario'))
+            
+            else:
+                query = text("""
+                            INSERT INTO Usuarios
+                            VALUES (DEFAULT, :nome, :email, :senha_hash, :telefone, :data, :multa)
+                            """)
+                conn.execute(query, {
+                    "nome": nome,
+                    "email": email,
+                    "senha_hash": senha_hash,
+                    "telefone": telefone,
+                    "data": data,
+                    "multa": multa
+                })
+                conn.commit()
+            return redirect(url_for('login'))
 
     return render_template('cadastro_usuario.html')
 
@@ -212,10 +221,30 @@ def cadastro_livro():
             # Auto-cria vinculados se não existirem
             if not editora_id:
                 return redirect(url_for('cadastro_editora'))
+                '''sql = text("""
+                    INSERT INTO Editoras 
+                    VALUES (DEFAULT, :editora, NULL)
+                """)
+                conn.execute(sql, {"editora":editora})
+                flash("editora ainda não cadastrada")'''
+                
             if not genero_id:
                 return redirect(url_for('cadastro_genero'))
+                '''sql = text("""
+                    INSERT INTO Generos 
+                    VALUES (DEFAULT, :genero)
+                """)
+                conn.execute(sql, {"genero":genero})
+                flash("gênero ainda não cadastrado")'''
             if not autor_id:
                 return redirect(url_for('cadastro_autor'))
+                '''sql = text("""
+                    INSERT INTO Autores 
+                    VALUES (DEFAULT, :autor, NULL, NULL, NULL)
+                """)
+                conn.execute(sql, {"autor":autor})
+                flash("autor ainda não cadastrado")'''
+            
 
             conn.execute(query, {
                 'titulo': titulo,
