@@ -481,14 +481,21 @@ def lista_autores():
     return render_template('lista_autores.html', autores=autores)
 
 
-@app.route('/cadastrar_emprestimo')
+@app.route('/cadastrar_emprestimo', methods = ['POST','GET'])
 def cadastrar_emprestimo():
-    data_emprestimo = request.form['data_emprestimo']
-    data_devolucao = request.form['data_devolucao']
-    data_devolucao_real = request.form['data_devolucao_real']
-    status_emprestimo = request.form['status_emprestimo']
+    if request.method == 'POST':
+        isbn = request.form['ISBN']
+        data_emprestimo = request.form['data_emprestimo']
+        data_devolucao = request.form['data_devolucao']
+        data_devolucao_real = request.form['data_devolucao_real']
+        status_emprestimo = request.form['status_emprestimo']
 
-    
+        with engine.connect() as conn:
+            livro = conn.execute(text('select ID_livro from Livros where ISBN = :isbn '),{'isbn':isbn}).scalar()
+            conn.execute(text('INSERT INTO Emprestimos VALUES(DEFAULT, :Usuario_id, :Livro_id, :Data_emprestimo,:Data_devolucao_prevista, :Data_devoluçao_real,:Status_emprestimo)'),
+            {'Usuario_id' : current_user.id,'Livro_id' : livro, 'Data_emprestimo' : data_emprestimo, 'Data_devolucao_prevista': data_devolucao, 'Data_devoluçao_real': data_devolucao_real , 'Status_emprestimo' : status_emprestimo})
+            conn.commit()
+    return render_template('cadastrar_emprestimo.html')
 
 @app.route('/emprestimos')
 def listar_emprestimos():
@@ -496,6 +503,65 @@ def listar_emprestimos():
         query = text("SELECT * FROM Emprestimos")
         rows = conn.execute(query).mappings().fetchall()
     return render_template('lista_emprestimo.html', rows=rows)
+
+
+@app.route('/deletar_emprestimo/<int:id>' )
+def deletar_emprestimo(id):
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("DELETE FROM Emprestimos WHERE ID_emprestimo = :id"), {"id": id})
+            conn.commit()
+        except Exception as e:
+            flash(f"Erro de integridade {e}")
+        finally:
+            conn.close()
+    return redirect(url_for('listar_emprestimos'))
+
+@app.route('/editar_emprestimo')
+def editar_emprestimo():
+    with engine.connect() as conn:
+        if request.method == 'POST':
+            id_emprestimo = request.form['ID_emprestimo']
+            usuario_id = request.form['Usuario_id']
+            livro_id = request.form['Livro_id']
+            data_emprestimo = request.form['Data_emprestimo']
+            data_devolucao_prevista = request.form['Data_devolucao_prevista']
+            data_devolucao_real = request.form['Data_devolucao_real']
+            status_emprestimo = request.form['Status_emprestimo']
+
+            conn.execute(text("""
+                UPDATE Emprestimos
+                SET ID_emprestimo = :id_emprestimo,
+                    Usuario_id = :usuario_id,
+                    Livro_id = :livro_id,
+                    Data_emprestimo = :data_emprestimo
+                    Data_devolucao_prevista = :data_devolucao_prevista
+                    Data_devolucao_real = :data_devolucao_real
+                    Status_emprestimo = :status_emprestimo
+                WHERE ID_emprestimo = :id
+            """), {
+                "id_emprestimo": id_emprestimo,
+                "usuario_id": usuario_id,
+                "livro_id": livro_id,
+                "data_emprestimo": data_emprestimo,
+                "data_devolucao_prevista": data_devolucao_prevista,
+                "data_devolucao_real": data_devolucao_real,
+                "status_emprestimo": status_emprestimo,
+                "id": id_emprestimo
+            })
+            conn.commit()
+
+            return redirect(url_for('listar_livros'))
+
+        emprestimos = conn.execute(text("""
+            SELECT * FROM Autores
+            WHERE ID_autor = :id
+        """), {"id": id_emprestimo}).mappings().fetchone()
+
+    return render_template('editar_emprestimo.html', emprestimos)
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
