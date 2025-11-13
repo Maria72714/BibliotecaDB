@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+
+{%block title%} Editora {%endblock%}
+
+{%block conteudo%}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_livro.css') }}">
+ 
+    <h1>Editar Editora</h1>
+    <form action="{{ url_for('cadastro_autor', id=Emprestimos.ID_emprestimo) }}" method="post">
+        <label for="ID_emprestimo">ID_emprestimo</label>
+        <input id="ID_emprestimo" name="ID_emprestimo" type="number" placeholder="{{ Emprestimos.ID_emprestimo}}">
+
+        <label for="Usuario_id">Usuario_id</label>
+        <input id="Usuario_id" name="Usuario_id" type="number" placeholder="{{ Emprestimos.Usuario_id}}">
+
+        <label for="Livro_id">Livro_id</label>
+        <input id="Livro_id" name="Livro_id" type="number" placeholder="{{ Emprestimos.Livro_id}}">
+
+        <label for="Data_emprestimo">Data_emprestimo</label>
+        <input id="Data_emprestimo" name="Data_emprestimo" type="number" placeholder="{{ Emprestimos.Data_emprestimo}}">
+
+        <label for="Data_devolucao_prevista">Data_devolucao_prevista</label>
+        <input id="Data_devolucao_prevista" name="Data_devolucao_prevista" type="number" placeholder="{{ Emprestimos.Data_devolucao_prevista}}">
+
+        <label for="Data_devolucao_real">Data_devolucao_real</label>
+        <input id="Data_devolucao_real" name="Data_devolucao_real" type="number" placeholder="{{ Emprestimos.Data_devolucao_real}}">
+
+        <label for="Status_emprestimo">Status_emprestimo</label>
+        <input id="Status_emprestimo" name="Status_emprestimo" type="number" placeholder="{{ Emprestimos.Status_emprestimo}}">
+        <button type="submit">Enviar</button>
+    </form>
+
+{%endblock%}

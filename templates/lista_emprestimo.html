@@ -8,32 +8,44 @@
 
 <div class="pagina-lista">
   <h1>Listar Emprestimo</h1>
-
+  <form action="{{url_for('cadastrar_emprestimo')}}">
+    <input type="submit" value="Registrar Emprestimo">
+  </form>
   <div class="tabela-wrapper">
     <table class="tabela">
       <thead>
         <tr>
             <th>ID Emprestimo</th>
-            <th>Nome</th>
-            <th>Endereço</th>
-            <th>Ações</th>
+            <th>Usuario_id</th>
+            <th>Livro_id</th>
+            <th>Data Emprestimo</th>
+            <th>Devolução Prevista</th>
+            <th>Devolução Real</th>
+            <th>Status</th>
+            <th>Acões</th>
         </tr>
       </thead>
         <tbody>
-            {% for emprestimo in emprestimos %}
+            {% for emprestimo in rows %}
             <tr>
             <td>{{ emprestimo.ID_emprestimo }}</td>
-            <td>{{ emprestimo.Nome }}</td>
-            <td>{{ emprestimo.Endereco }}</td>
-            <td class="acoes">
-                <a href="{{ url_for('editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">Editar</a>
-                <a href="{{ url_for('deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
-            </td>
+            <td>{{ emprestimo.Usuario_id }}</td>
+            <td>{{ emprestimo.Livro_id }}</td>
+            <td>{{ emprestimo.Data_emprestimo }}</td>
+            <td>{{ emprestimo.Data_devolucao_prevista }}</td>
+            <td>{{ emprestimo.Data_devolucao_real}}</td>
+            <td>{{ emprestimo.Status_emprestimo }}</td>
             </tr>
+            <td class="acoes">
+              
+              <a href="{{ url_for('deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
+            </td>
             {% endfor %}
         </tbody>
+        
     </table>
     </div>
+    
 </div>
 {% endblock %}
 
