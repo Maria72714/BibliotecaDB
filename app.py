@@ -481,6 +481,14 @@ def lista_autores():
     return render_template('lista_autores.html', autores=autores)
 
 
+@app.route('/cadastrar_emprestimo')
+def cadastrar_emprestimo():
+    data_emprestimo = request.form['data_emprestimo']
+    data_devolucao = request.form['data_devolucao']
+    data_devolucao_real = request.form['data_devolucao_real']
+    status_emprestimo = request.form['status_emprestimo']
+
+    
 
 @app.route('/emprestimos')
 def listar_emprestimos():

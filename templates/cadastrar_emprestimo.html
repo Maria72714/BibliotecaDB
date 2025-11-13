@@ -1,0 +1,17 @@
+{% extends "base.html" %} 
+
+{%block title%} Cadastro {%endblock%}
+
+{%block conteudo%}
+ <form action="{{url_for('cadastrar_emprestimo')}}" method="POST">
+    <label for="data_emprestimo">Nome</label>
+    <input id="data_emprestimo" name="data_emprestimo" type="text">
+    <label for="data_devolucao">Nome</label>
+    <input id="data_devolucao" name="data_devolucao" type="text">
+    <label for="data_devolucao_real">Nome</label>
+    <input id="data_devolucao_real" name="data_devolucao_real" type="text">
+    <label for="status_emprestimo">Nome</label>
+    <input id="status_emprestimo" name="status_emprestimo" type="text">
+    <button type="submit">Enviar</button>
+ </form>
+{%endblock%}
