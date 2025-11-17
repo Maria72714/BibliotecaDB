@@ -5,6 +5,13 @@
 {%block conteudo%}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/emprestimo.css') }}">
+<label for="livro">Livro:</label>
+<select name="id_livro" id="livro">
+    <option value="">-- selecione um livro --</option>
+    {% for livro in livros %}
+        <option value="{{livro.ID_livro}}"> {{livro.Titulo}} </option>
+    {% endfor %}
+</select>
  <form action="{{url_for('cadastrar_emprestimo')}}" method="POST">
    <label for="ISBN">ISBN</label>
     <input id="ISBN" name="ISBN" type="text">

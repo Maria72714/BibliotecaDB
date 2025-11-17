@@ -467,7 +467,7 @@ def deletar_autor(id):
             conn.execute(text("DELETE FROM Autores WHERE ID_autor = :id"), {"id": id})
             conn.commit()
         except Exception as e:
-            flash(f"Erro de integridade {e}")
+            flash(f"Erro de integridade {e}", "error")
         finally:
             conn.close()
     return redirect(url_for('lista_autores'))
@@ -507,7 +507,11 @@ def cadastrar_emprestimo():
                         SET Quantidade_disponivel = Quantidade_disponivel - 1
                         WHERE ISBN = :isbn"""), { 'isbn':isbn})
             conn.commit()
-    return render_template('cadastrar_emprestimo.html')
+
+    with engine.connect() as conn:
+        livros = conn.execute(text("SELECT ID_livro, Titulo FROM Livros ORDER BY Titulo")).mappings().fetchall()
+        conn.close()        
+    return render_template('cadastrar_emprestimo.html', livros=livros)
 
 @app.route('/emprestimos')
 def listar_emprestimos():
