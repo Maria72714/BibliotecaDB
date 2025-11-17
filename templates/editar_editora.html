@@ -7,7 +7,7 @@
  
     <h1>Editar Editora</h1>
     {% include 'partials/error.html'   %}
-    <form method="POST" action="{{ url_for('editar_editoras' , id=editora.ID_editora) }}">
+    <form method="POST" action="{{ url_for('editora.editar_editoras' , id=editora.ID_editora) }}">
         <label for="nome">Nome</label>
         <input type="text" id="nome" name="nome" placeholder="{{ editora.Nome_editora }}" value="{{ editora.Nome_editora }}">
         <label for="endereco">Endereço</label>

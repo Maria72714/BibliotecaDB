@@ -28,8 +28,8 @@
           <td>{{ autor.Nacionalidade }}</td>
           <td>{{ autor.Data_nascimento }}</td>
           <td class="acoes">
-            <a href="{{ url_for('editar_autor', id=autor.ID_autor) }}" class="btn-acao btn-editar">Editar</a>
-            <a href="{{ url_for('deletar_autor', id=autor.ID_autor) }}" class="btn-acao btn-excluir">Excluir</a>
+            <a href="{{ url_for('autor.editar_autor', id=autor.ID_autor) }}" class="btn-acao btn-editar">Editar</a>
+            <a href="{{ url_for('autor.deletar_autor', id=autor.ID_autor) }}" class="btn-acao btn-excluir">Excluir</a>
           </td>
         </tr>
         {% endfor %}

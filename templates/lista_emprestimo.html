@@ -9,7 +9,7 @@
 <div class="pagina-lista">
   <h1>Listar Emprestimo</h1>
   <div class="wrapper">
-    <form action="{{url_for('cadastrar_emprestimo')}}">
+  <form action="{{ url_for('emprestimo.cadastrar_emprestimo') }}">
       <input type="submit" value="Registrar Emprestimo">
       </form>
     <div class="tabela-wrapper">
@@ -38,8 +38,8 @@
               <td>{{ emprestimo.Status_emprestimo }}</td>
               <td class="acoes">
                 
-                <a href="{{ url_for('deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
-                <a href="{{ url_for('editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">editar</a>
+                <a href="{{ url_for('emprestimo.deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
+                <a href="{{ url_for('emprestimo.editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">editar</a>
               </td>
               </tr>
               {% endfor %}

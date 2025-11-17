@@ -6,7 +6,7 @@
  <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_livro.css') }}">
  
     <h1>Editar Emprestimo</h1>
-    <form action="{{ url_for('editar_emprestimo', id=Emprestimos.ID_emprestimo) }}" method="post">
+    <form action="{{ url_for('emprestimo.editar_emprestimo', id=Emprestimos.ID_emprestimo) }}" method="post">
         <label for="ID_emprestimo">ID_emprestimo</label>
         <input id="ID_emprestimo" name="ID_emprestimo" type="text" placeholder="{{ Emprestimos.ID_emprestimo}}" value="{{ Emprestimos.ID_emprestimo}}">
 

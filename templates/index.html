@@ -10,8 +10,8 @@
     <h1>Bem-vindo à Biblioteca</h1>
     <p>Gerencie livros, autores, editoras e gêneros em um só lugar.</p>
     <div class="actions">
-      <a class="btn primary" href="{{ url_for('listar_livros') }}">Ver todos os livros</a>
-      <a class="btn" href="{{ url_for('cadastro_livro') }}">Cadastrar livro</a>
+  <a class="btn primary" href="{{ url_for('livro.listar_livros') }}">Ver todos os livros</a>
+  <a class="btn" href="{{ url_for('livro.cadastro_livro') }}">Cadastrar livro</a>
     </div>
   </div>
   <img src="{{ url_for('static', filename='img/image.png') }}" alt="Imagem de Biblioteca" class="imagem-biblioteca">

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/livro.css') }}">
     <h1>Cadastrar Livro</h1>
     {% include 'partials/error.html' %}
-    <form action="{{ url_for('cadastro_livro' ) }}" method="post">
+    <form action="{{ url_for('livro.cadastro_livro') }}" method="post">
         <div class="content">
             <div class="form1">
                 <label for="titulo">Título</label>

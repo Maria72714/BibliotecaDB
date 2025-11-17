@@ -24,8 +24,8 @@
           <td>{{ genero.ID_genero }}</td>
           <td>{{ genero.Nome_genero }}</td>
           <td class="acoes">
-            <a href="{{ url_for('editar_genero', id=genero.ID_genero) }}" class="btn-acao btn-editar">Editar</a>
-            <a href="{{ url_for('deletar_genero', id=genero.ID_genero) }}" class="btn-acao btn-excluir">Excluir</a>
+            <a href="{{ url_for('genero.editar_genero', id=genero.ID_genero) }}" class="btn-acao btn-editar">Editar</a>
+            <a href="{{ url_for('genero.deletar_genero', id=genero.ID_genero) }}" class="btn-acao btn-excluir">Excluir</a>
           </td>
         </tr>
         {% endfor %}

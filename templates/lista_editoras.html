@@ -26,8 +26,8 @@
           <td>{{ editora.Nome_editora }}</td>
           <td>{{ editora.Endereco_editora }}</td>
           <td class="acoes">
-            <a href="{{ url_for('editar_editoras', id=editora.ID_editora) }}" class="btn-acao btn-editar">Editar</a>
-            <a href="{{ url_for('deletar_editoras', id=editora.ID_editora) }}" class="btn-acao btn-excluir">Excluir</a>
+            <a href="{{ url_for('editora.editar_editoras', id=editora.ID_editora) }}" class="btn-acao btn-editar">Editar</a>
+            <a href="{{ url_for('editora.deletar_editoras', id=editora.ID_editora) }}" class="btn-acao btn-excluir">Excluir</a>
           </td>
         </tr>
         {% endfor %}
