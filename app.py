@@ -284,7 +284,7 @@ def editar_livro(id):
 
             return redirect(url_for('listar_livros'))
 
-        # 🔹 Quando for GET (abrir a página), busca o livro no banco:
+        #  Quando for GET (abrir a página), busca o livro no banco:
         livro = conn.execute(text("""
             SELECT 
                 l.ID_livro,
@@ -494,6 +494,7 @@ def cadastrar_emprestimo():
         with engine.connect() as conn:
             
             livro = conn.execute(text('select ID_livro from Livros where ISBN = :isbn '),{'isbn':isbn}).scalar()
+            
             qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':livro}).scalar()
             if qtd_livro < 1:
                 flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!")
