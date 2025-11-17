@@ -5,14 +5,8 @@
 {% block conteudo %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/listar_editora.css') }}">
 <h1>Empréstimo de Livro</h1>
-<form method="POST" action="{{ url_for('emprestar_livro', id=livro.ID_livro) }}">
+<form method="POST" action="{{ url_for('cadastrar_livro', id=livro.ID_livro) }}">
     <div class="form-group">
-        <select name="" id="">
-            <option value="">--livros--</option>
-            {% for livro in livros %}
-                <option value="livro.ID_livro"> {{livro.Nome_livro}} </option>
-            {% endfor %}
-        </select>
         <label for="nome_usuario">Nome do Usuário:</label>
         <input type="text" id="nome_usuario" name="nome_usuario" required>
     </div>
