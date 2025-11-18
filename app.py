@@ -2,7 +2,7 @@ from extensions import app
 from utils import login_manager
 from controllers import auth, autor, editora, emprestimo, genero, livro, usuario
 
-app.secret_key = 'secret_key_123'
+app.secret_key = 'secret_key_1234'
 
 login_manager.init_app(app)
 
