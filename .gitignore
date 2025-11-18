@@ -4,3 +4,4 @@ __pycache__/
 # Outras exclusões comuns
 *.pyc
 *.pyo
+env/

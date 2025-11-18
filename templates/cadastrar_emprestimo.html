@@ -9,24 +9,24 @@
  <form action="{{url_for('emprestimo.cadastrar_emprestimo')}}" method="POST">
     <label for="livro">Livro:</label>
    <select name="id_livro" id="livro">
-    <option value="">-- selecione um livro --</option>
+    <option value="" style="text-align: center;">-- Selecione um Livro --</option>
     {% for livro in livros %}
         <option value="{{livro.ID_livro}}"> {{livro.Titulo}} </option>
     {% endfor %}
-</select>
+    </select>
 
-    <label for="data_emprestimo">Data Emprestimo</label>
-    <input id="data_emprestimo" name="data_emprestimo" type="text">
+        <label for="data_emprestimo">Data Emprestimo</label>
+        <input id="data_emprestimo" name="data_emprestimo" type="date" placeholder="YYYY-MM-DD">
 
-    <label for="data_devolucao">Data Devolução</label>
-    <input id="data_devolucao" name="data_devolucao" type="text">
+        <label for="data_devolucao">Data Devolução Prevista</label>
+        <input id="data_devolucao" name="data_devolucao" type="date">
 
-    <label for="data_devolucao_real">Data Devolução Real</label>
-    <input id="data_devolucao_real" name="data_devolucao_real" type="text">
+        <label for="data_devolucao_real">Data Devolução Real</label>
+        <input id="data_devolucao_real" name="data_devolucao_real" type="date">
 
-    <label for="status_emprestimo">Status</label>
-    <input id="status_emprestimo" name="status_emprestimo" type="text">
+        <label for="status_emprestimo">Status</label>
+        <input id="status_emprestimo" name="status_emprestimo" type="text" placeholder="pendente/devolvido/atrasado">
 
-    <button type="submit">Enviar</button>
+        <button type="submit">Enviar</button>
  </form>
 {%endblock%}
