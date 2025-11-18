@@ -1,0 +1,6 @@
+# Ignorar pastas __pycache__
+__pycache__/
+
+# Outras exclusões comuns
+*.pyc
+*.pyo

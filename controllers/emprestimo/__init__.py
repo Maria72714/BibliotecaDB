@@ -9,7 +9,7 @@ emprestimo_bp = Blueprint("emprestimo", __name__, static_folder="static", templa
 @login_required
 def cadastrar_emprestimo():
     if request.method == 'POST':
-        isbn = request.form['ISBN']
+        id_livro = request.form['id_livro']
         data_emprestimo = request.form['data_emprestimo']
         data_devolucao = request.form['data_devolucao']
         data_devolucao_real = request.form['data_devolucao_real']
@@ -17,19 +17,19 @@ def cadastrar_emprestimo():
 
         with engine.connect() as conn:
             
-            livro = conn.execute(text('select ID_livro from Livros where ISBN = :isbn '),{'isbn':isbn}).scalar()
+            #livro = conn.execute(text('select ID_livro from Livros where ID = :isbn '),{'isbn':isbn}).scalar()
             
-            qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':livro}).scalar()
+            qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':id_livro}).scalar()
             if qtd_livro < 1:
                 flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!")
                 return redirect(url_for('cadastrar_emprestimo'))
             conn.execute(text('INSERT INTO Emprestimos VALUES(DEFAULT, :Usuario_id, :Livro_id, :Data_emprestimo,:Data_devolucao_prevista, :Data_devoluçao_real,:Status_emprestimo)'),
-            {'Usuario_id' : current_user.id,'Livro_id' : livro, 'Data_emprestimo' : data_emprestimo, 'Data_devolucao_prevista': data_devolucao, 'Data_devoluçao_real': data_devolucao_real , 'Status_emprestimo' : status_emprestimo})
+            {'Usuario_id' : current_user.id,'Livro_id' : id_livro, 'Data_emprestimo' : data_emprestimo, 'Data_devolucao_prevista': data_devolucao, 'Data_devoluçao_real': data_devolucao_real , 'Status_emprestimo' : status_emprestimo})
             #atualizando a quantidade de livros
             conn.execute(text("""
                         UPDATE Livros
                         SET Quantidade_disponivel = Quantidade_disponivel - 1
-                        WHERE ISBN = :isbn"""), { 'isbn':isbn})
+                        WHERE ID_livro = :id_livro"""), { 'id_livro':id_livro})
             conn.commit()
 
     with engine.connect() as conn:

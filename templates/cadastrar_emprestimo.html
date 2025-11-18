@@ -6,7 +6,7 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/emprestimo.css') }}">
 
- <form action="{{url_for('cadastrar_emprestimo')}}" method="POST">
+ <form action="{{url_for('emprestimo.cadastrar_emprestimo')}}" method="POST">
     <label for="livro">Livro:</label>
    <select name="id_livro" id="livro">
     <option value="">-- selecione um livro --</option>
@@ -14,12 +14,6 @@
         <option value="{{livro.ID_livro}}"> {{livro.Titulo}} </option>
     {% endfor %}
 </select>
-<<<<<<< Updated upstream
-=======
- <form action="{{ url_for('emprestimo.cadastrar_emprestimo') }}" method="POST">
-   <label for="ISBN">ISBN</label>
-    <input id="ISBN" name="ISBN" type="text">
->>>>>>> Stashed changes
 
     <label for="data_emprestimo">Data Emprestimo</label>
     <input id="data_emprestimo" name="data_emprestimo" type="text">
