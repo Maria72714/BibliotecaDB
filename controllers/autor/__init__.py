@@ -24,7 +24,7 @@ def cadastro_autor():
                                'nascimento': data_nascimento, 
                                'biografia': biografia})
             conn.commit()
-            return redirect(url_for('cadastro_livro'))
+            return redirect(url_for('livro.cadastro_livro'))
     return render_template('cadastro_autor.html')
 
 @autor_bp.route('/lista_autores')
@@ -60,7 +60,7 @@ def editar_autor(id):
             })
             conn.commit()
 
-            return redirect(url_for('listar_livros'))
+            return redirect(url_for('livro.listar_livros'))
 
         autores = conn.execute(text("""
             SELECT * FROM Autores
@@ -80,4 +80,4 @@ def deletar_autor(id):
             flash(f"Erro de integridade {e}", "error")
         finally:
             conn.close()
-    return redirect(url_for('lista_autores'))
+    return redirect(url_for('autor.lista_autores'))

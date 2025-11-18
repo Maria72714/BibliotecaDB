@@ -90,5 +90,5 @@ def deletar_emprestimo(id):
             flash(f"Erro de integridade {e}")
         finally:
             conn.close()
-    return redirect(url_for('listar_emprestimos'))
+    return redirect(url_for('emprestimo.listar_emprestimos'))
 

@@ -29,13 +29,13 @@ def login():
             if usuario and check_password_hash(usuario.Senha, senha):
                 user = User.get_by_id(usuario.ID_usuario)
                 login_user(user)
-                return redirect(url_for('cadastro_livro'))
+                return redirect(url_for('livro.cadastro_livro'))
             
             flash('Email ou senha inválidos')
-            return redirect(url_for('login'))
+            return redirect(url_for('auth.login'))
     return render_template('login.html')
 
 @auth_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.index'))

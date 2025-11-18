@@ -19,7 +19,7 @@ def cadastro_editora():
             """)
             conn.execute(sql, {'editora': editora, 'endereco': endereco})
             conn.commit()
-        return redirect(url_for('cadastro_livro'))
+        return redirect(url_for('livro.cadastro_livro'))
     return render_template('cadastro_editora.html')  
 
 @editora_bp.route('/editoras')
@@ -45,7 +45,7 @@ def editar_editoras(id):
             """), {"nome": nome, "endereco": endereco ,"id": id})
             conn.commit()
 
-            return redirect(url_for('listar_editoras'))
+            return redirect(url_for('editora.listar_editoras'))
 
         editora = conn.execute(text("""
             SELECT * FROM Editoras
@@ -65,4 +65,4 @@ def deletar_editoras(id):
             flash(f"Erro de integridade {e}")
         finally:
             conn.close()
-    return redirect(url_for('listar_editoras'))
+    return redirect(url_for('editora.listar_editoras'))

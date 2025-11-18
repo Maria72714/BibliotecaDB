@@ -24,7 +24,7 @@ def cadastro_usuario():
             user = conn.execute(sql, {"email":email}).fetchone()
             if user:
                 flash('Usuário já cadastrado')
-                return redirect(url_for('cadastro_usuario'))
+                return redirect(url_for('usuario.cadastro_usuario'))
             
             else:
                 query = text("""
@@ -40,6 +40,6 @@ def cadastro_usuario():
                     "multa": multa
                 })
                 conn.commit()
-            return redirect(url_for('login'))
+            return redirect(url_for('auth.login'))
 
     return render_template('cadastro_usuario.html')

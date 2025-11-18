@@ -18,7 +18,7 @@ def cadastro_genero():
             """)
             conn.execute(sql, {'genero': genero})
             conn.commit()
-        return redirect(url_for('cadastro_livro'))
+        return redirect(url_for('livro.cadastro_livro'))
     return render_template('cadastro_genero.html')
 
 

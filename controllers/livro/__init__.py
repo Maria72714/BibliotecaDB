@@ -65,7 +65,7 @@ def cadastro_livro():
                 flash("editora ainda não cadastrada")'''
                 
             if not genero_id:
-                return redirect(url_for('cadastro_genero'))
+                return redirect(url_for('genero.cadastro_genero'))
                 '''sql = text("""
                     INSERT INTO Generos 
                     VALUES (DEFAULT, :genero)
@@ -73,7 +73,7 @@ def cadastro_livro():
                 conn.execute(sql, {"genero":genero})
                 flash("gênero ainda não cadastrado")'''
             if not autor_id:
-                return redirect(url_for('cadastro_autor'))
+                return redirect(url_for('autor.cadastro_autor'))
                 '''sql = text("""
                     INSERT INTO Autores 
                     VALUES (DEFAULT, :autor, NULL, NULL, NULL)
@@ -93,7 +93,7 @@ def cadastro_livro():
                 'resumo': resumo
             })
             conn.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('auth.index'))
     return render_template('cadastro_livro.html')
 
 
@@ -145,7 +145,7 @@ def editar_livro(id):
             """), {"titulo": titulo, "isbn": isbn, "ano": ano, "resumo": resumo, "qtd": qtd, "id": id})
             conn.commit()
 
-            return redirect(url_for('listar_livros'))
+            return redirect(url_for('livro.listar_livros'))
 
         #  Quando for GET (abrir a página), busca o livro no banco:
         livro = conn.execute(text("""
@@ -180,4 +180,4 @@ def deletar_livro(id):
             flash(f"Erro de integridade {e}")
         finally:
             conn.close()
-    return redirect(url_for('listar_livros'))
+    return redirect(url_for('livro.listar_livros'))
