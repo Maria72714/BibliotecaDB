@@ -24,7 +24,7 @@ CREATE TABLE Livros (
     ID_livro INT AUTO_INCREMENT PRIMARY KEY,
     Titulo VARCHAR(255) NOT NULL,
     Autor_id INT,
-    ISBN VARCHAR(13) NOT NULL,
+    ISBN VARCHAR(13) NOT NULL UNIQUE,
     Ano_publicacao INT,
     Genero_id INT,
     Editora_id INT,
@@ -38,7 +38,7 @@ CREATE TABLE Livros (
 CREATE TABLE Usuarios (
     ID_usuario INT AUTO_INCREMENT PRIMARY KEY,
     Nome_usuario VARCHAR(255) NOT NULL,
-    Email VARCHAR(255),
+    Email VARCHAR(255) UNIQUE,
     Senha VARCHAR(255),
     Numero_telefone VARCHAR(15),
     Data_inscricao DATE,
