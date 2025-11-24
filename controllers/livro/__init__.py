@@ -56,6 +56,7 @@ def cadastro_livro():
 
             # Auto-cria vinculados se não existirem
             if not editora_id:
+                flash('Editora não encontrada, cadastre para continuar!','error')
                 return redirect(url_for('cadastro_editora'))
                 '''sql = text("""
                     INSERT INTO Editoras 
@@ -65,6 +66,7 @@ def cadastro_livro():
                 flash("editora ainda não cadastrada")'''
                 
             if not genero_id:
+                flash('Genero não encontrado, cadastre para continuar!', 'error')
                 return redirect(url_for('genero.cadastro_genero'))
                 '''sql = text("""
                     INSERT INTO Generos 
@@ -73,6 +75,7 @@ def cadastro_livro():
                 conn.execute(sql, {"genero":genero})
                 flash("gênero ainda não cadastrado")'''
             if not autor_id:
+                flash('autor não encontrado, cadastre para continuar!', 'error')
                 return redirect(url_for('autor.cadastro_autor'))
                 '''sql = text("""
                     INSERT INTO Autores 
@@ -177,7 +180,7 @@ def deletar_livro(id):
             conn.execute(text("DELETE FROM Livros WHERE ID_livro = :id"), {"id": id})
             conn.commit()
         except Exception as e:
-            flash(f"Erro de integridade {e}")
+            flash(f"Erro de integridade {e}",'error')
         finally:
             conn.close()
     return redirect(url_for('livro.listar_livros'))

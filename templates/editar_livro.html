@@ -9,17 +9,22 @@
     <form action="" method="post">
         <div class="content">
             <label for="titulo">Título</label>
-            <input id="titulo" name="titulo" type="text" placeholder="{{ livro.Titulo }} ">
+            <input id="titulo" name="titulo" type="text" placeholder="{{ livro.Titulo }}" value="{{ livro.Titulo }}">
+
             <label for="isbn">ISBN</label>
-            <input id="isbn" name="isbn" type="text" placeholder="{{livro.ISBN}}">
+            <input id="isbn" name="isbn" type="text" placeholder="{{livro.ISBN}}" value="{{ livro.ISBN }}">
+
             <label for="ano_publicacao">Ano de Publicação</label>
-            <input id="ano_publicacao" name="ano_publicacao" type="number" placeholder="{{livro.Ano_publicacao}}">
+            <input id="ano_publicacao" name="ano_publicacao" type="number" placeholder="{{livro.Ano_publicacao}}" value="{{livro.Ano_publicacao}}">
+
             <label for="qtd_disponivel">Disponível</label>
-            <input id="qtd_disponivel" name="qtd_disponivel" type="number" placeholder="{{livro.Quantidade_disponivel}}">
+            <input id="qtd_disponivel" name="qtd_disponivel" type="number" placeholder="{{livro.Quantidade_disponivel}}" value="{{livro.Quantidade_disponivel}}">
+
             <label for="genero">Gênero</label>
-            <input type="text" name="genero" id="genero" placeholder="{{livro.Genero}}">
+            <input type="text" name="genero" id="genero" placeholder="{{livro.Genero}}" value="{{livro.Genero}}">
+
             <label for="resumo">Resumo</label>
-            <input id="resumo" name="resumo" type="text" placeholder="{{livro.Resumo}}">
+            <input id="resumo" name="resumo" type="text" placeholder="{{livro.Resumo}}" value="{{livro.Resumo}}">
         </div>
         <button type="submit">Enviar</button>
     </form>

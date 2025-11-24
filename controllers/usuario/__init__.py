@@ -23,7 +23,7 @@ def cadastro_usuario():
                     """)
             user = conn.execute(sql, {"email":email}).fetchone()
             if user:
-                flash('Usuário já cadastrado')
+                flash('Usuário já cadastrado','error')
                 return redirect(url_for('usuario.cadastro_usuario'))
             
             else:

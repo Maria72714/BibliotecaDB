@@ -60,7 +60,7 @@ def editar_autor(id):
             })
             conn.commit()
 
-            return redirect(url_for('livro.listar_livros'))
+            return redirect(url_for('autor.lista_autores'))
 
         autores = conn.execute(text("""
             SELECT * FROM Autores

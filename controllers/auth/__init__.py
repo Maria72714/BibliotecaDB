@@ -31,7 +31,7 @@ def login():
                 login_user(user)
                 return redirect(url_for('livro.cadastro_livro'))
             
-            flash('Email ou senha inválidos')
+            flash('Email ou senha inválidos', 'error')
             return redirect(url_for('auth.login'))
     return render_template('login.html')
 
