@@ -20,8 +20,8 @@ def cadastrar_emprestimo():
             
             qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':id_livro}).scalar()
             if qtd_livro < 1:
-                flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!")
-                return redirect(url_for('cadastrar_emprestimo'))
+                flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!", 'error')
+                return redirect(url_for('emprestimo.cadastrar_emprestimo'))
             conn.execute(text('''INSERT INTO Emprestimos VALUES(DEFAULT, 
                                                                 :Usuario_id, 
                                                                 :Livro_id,
@@ -89,9 +89,11 @@ def deletar_emprestimo(id):
     with engine.connect() as conn:
         try:
             conn.execute(text("DELETE FROM Emprestimos WHERE ID_emprestimo = :id"), {"id": id})
+            conn.execute(text("SELECT Livro_id from Emprestimos where ID_emprestimo = :id"), {"id": id})
+            conn.execute(text("UPDATE Livros SET Quantidade_disponivel = Quantidade_disponivel + 1"))
             conn.commit()
         except Exception as e:
-            flash(f"Erro de integridade {e}")
+            flash(f"Erro de integridade {e}",'error')
         finally:
             conn.close()
     return redirect(url_for('emprestimo.listar_emprestimos'))

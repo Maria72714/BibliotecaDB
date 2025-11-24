@@ -41,7 +41,7 @@ def deletar_genero(id):
             flash(f"Erro de integridade {e}")
         finally:
             conn.close()
-    return redirect(url_for('listar_generos'))
+    return redirect(url_for('genero.listar_generos'))
 
 
 @genero_bp.route('/editar_genero/<int:id>', methods=['GET', 'POST'])
@@ -59,7 +59,7 @@ def editar_genero(id):
             """), {"nome": nome, "id": id})
             conn.commit()
 
-            return redirect(url_for('listar_generos'))
+            return redirect(url_for('genero.listar_generos'))
 
         
         genero = conn.execute(text("""

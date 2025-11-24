@@ -62,7 +62,7 @@ def deletar_editoras(id):
             conn.execute(text("DELETE FROM Editoras WHERE ID_editora = :id"), {"id": id})
             conn.commit()
         except Exception as e:
-            flash(f"Erro de integridade {e}")
+            flash(f"Erro de integridade {e}",'error')
         finally:
             conn.close()
     return redirect(url_for('editora.listar_editoras'))
