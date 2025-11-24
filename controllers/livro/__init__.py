@@ -57,7 +57,7 @@ def cadastro_livro():
             # Auto-cria vinculados se não existirem
             if not editora_id:
                 flash('Editora não encontrada, cadastre para continuar!','error')
-                return redirect(url_for('cadastro_editora'))
+                return redirect(url_for('editora.cadastro_editora'))
                 '''sql = text("""
                     INSERT INTO Editoras 
                     VALUES (DEFAULT, :editora, NULL)
