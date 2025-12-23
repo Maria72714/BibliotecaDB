@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for,
 from flask_login import login_required
 from extensions.database import engine
 from sqlalchemy import text
-import pymysql
+from sqlalchemy.exc import DBAPIError
 
 livro_bp = Blueprint("livro", __name__, static_folder="static", template_folder="templates")
 
@@ -155,8 +155,8 @@ def editar_livro(id):
                 """), {"titulo": titulo, "isbn": isbn, "ano": ano, "resumo": resumo, "qtd": qtd, "id": id})
                 conn.commit()
 
-            except pymysql.MySQLError as e:
-                mensagem = e.args[1]
+            except DBAPIError as e:
+                mensagem = e.orig.args[1]
                 flash(f"Erro ao atualizar o livro: {mensagem}", 'error')
                 return redirect(url_for('livro.editar_livro', id=id)) 
 

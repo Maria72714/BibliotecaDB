@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from extensions.database import engine
 from sqlalchemy import text
 from datetime import date
+from sqlalchemy.exc import DBAPIError
 
 emprestimo_bp = Blueprint("emprestimo", __name__, static_folder="static", template_folder="templates")
 
@@ -17,25 +18,38 @@ def cadastrar_emprestimo():
         status_emprestimo = request.form['status_emprestimo']
 
         with engine.connect() as conn:
+            try:
+                qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':id_livro}).scalar()
+                if qtd_livro < 1:
+                    flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!", 'error')
+                    return redirect(url_for('emprestimo.cadastrar_emprestimo'))
+                conn.execute(text('''
+                    INSERT INTO Emprestimos
+                      (Usuario_id, Livro_id, Data_emprestimo, Data_devolucao_prevista, Data_devolucao_real, Status_emprestimo)
+                    VALUES
+                      (:Usuario_id, :Livro_id, :Data_emprestimo, :Data_devolucao_prevista, :Data_devolucao_real, :Status_emprestimo)
+                '''), {
+                    'Usuario_id': current_user.id,
+                    'Livro_id': id_livro,
+                    'Data_emprestimo': data_emprestimo,
+                    'Data_devolucao_prevista': data_devolucao,
+                    'Data_devolucao_real': data_devolucao_real,
+                    'Status_emprestimo': status_emprestimo
+                })
+                #atualizando a quantidade de livros
+                conn.execute(text("""
+                            UPDATE Livros
+                            SET Quantidade_disponivel = Quantidade_disponivel - 1
+                            WHERE ID_livro = :id_livro"""), { 'id_livro':id_livro})
+                conn.commit()
             
-            qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':id_livro}).scalar()
-            if qtd_livro < 1:
-                flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!", 'error')
-                return redirect(url_for('emprestimo.cadastrar_emprestimo'))
-            conn.execute(text('''INSERT INTO Emprestimos VALUES(DEFAULT, 
-                                                                :Usuario_id, 
-                                                                :Livro_id,
-                                                                :Data_emprestimo,
-                                                                :Data_devolucao_prevista,
-                                                                :Data_devoluçao_real,
-                                                                :Status_emprestimo)'''),
-            {'Usuario_id' : current_user.id,'Livro_id' : id_livro, 'Data_emprestimo' : data_emprestimo, 'Data_devolucao_prevista': data_devolucao, 'Data_devoluçao_real': data_devolucao_real , 'Status_emprestimo' : status_emprestimo})
-            #atualizando a quantidade de livros
-            conn.execute(text("""
-                        UPDATE Livros
-                        SET Quantidade_disponivel = Quantidade_disponivel - 1
-                        WHERE ID_livro = :id_livro"""), { 'id_livro':id_livro})
-            conn.commit()
+            except DBAPIError as e:
+                mensagem = e.orig.args[1]
+                flash(f"Erro ao cadastrar empréstimo: {mensagem}", 'error')
+
+            finally:
+                conn.close()
+
     with engine.connect() as conn:
         livros = conn.execute(text("SELECT ID_livro, Titulo FROM Livros ORDER BY Titulo")).mappings().fetchall()
         conn.close()     
@@ -60,7 +74,7 @@ def editar_emprestimo(id):
             status_emprestimo = request.form['Status_emprestimo']
 
             conn.execute(text("""
-                UPDATE emprestimos
+                UPDATE Emprestimos
                 SET Data_emprestimo = :data_emprestimo,
                     Data_devolucao_prevista = :data_devolucao_prevista,
                     Data_devolucao_real = :data_devolucao_real,
