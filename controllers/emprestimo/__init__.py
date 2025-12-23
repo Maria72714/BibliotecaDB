@@ -37,10 +37,10 @@ def cadastrar_emprestimo():
                     'Status_emprestimo': status_emprestimo
                 })
                 #atualizando a quantidade de livros
-                conn.execute(text("""
-                            UPDATE Livros
-                            SET Quantidade_disponivel = Quantidade_disponivel - 1
-                            WHERE ID_livro = :id_livro"""), { 'id_livro':id_livro})
+                # conn.execute(text("""
+                #             UPDATE Livros
+                #             SET Quantidade_disponivel = Quantidade_disponivel - 1
+                #             WHERE ID_livro = :id_livro"""), { 'id_livro':id_livro})
                 conn.commit()
             
             except DBAPIError as e:
@@ -103,8 +103,8 @@ def deletar_emprestimo(id):
     with engine.connect() as conn:
         try:
             conn.execute(text("DELETE FROM Emprestimos WHERE ID_emprestimo = :id"), {"id": id})
-            conn.execute(text("SELECT Livro_id from Emprestimos where ID_emprestimo = :id"), {"id": id})
-            conn.execute(text("UPDATE Livros SET Quantidade_disponivel = Quantidade_disponivel + 1"))
+            # conn.execute(text("SELECT Livro_id from Emprestimos where ID_emprestimo = :id"), {"id": id})
+            # conn.execute(text("UPDATE Livros SET Quantidade_disponivel = Quantidade_disponivel + 1"))
             conn.commit()
         except Exception as e:
             flash(f"Erro de integridade {e}",'error')
