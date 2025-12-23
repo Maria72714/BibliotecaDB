@@ -40,6 +40,7 @@
                 
                 <a href="{{ url_for('emprestimo.deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
                 <a href="{{ url_for('emprestimo.editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">editar</a>
+                <a href="{{ url_for('emprestimo.devolucao_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">Devolver</a>
               </td>
               </tr>
               {% endfor %}

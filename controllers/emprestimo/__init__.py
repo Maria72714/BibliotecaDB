@@ -4,7 +4,7 @@ from extensions.database import engine
 from sqlalchemy import text
 from datetime import date
 from sqlalchemy.exc import DBAPIError
-
+from datetime import date
 emprestimo_bp = Blueprint("emprestimo", __name__, static_folder="static", template_folder="templates")
 
 @emprestimo_bp.route('/cadastrar_emprestimo', methods = ['POST','GET'])
@@ -13,9 +13,8 @@ def cadastrar_emprestimo():
     if request.method == 'POST':
         id_livro = request.form['id_livro']
         data_emprestimo = request.form['data_emprestimo']
-        data_devolucao = request.form['data_devolucao']
-        data_devolucao_real = request.form['data_devolucao_real']
-        status_emprestimo = request.form['status_emprestimo']
+        # data_devolucao = request.form['data_devolucao']
+        # status_emprestimo = request.form['status_emprestimo']
 
         with engine.connect() as conn:
             try:
@@ -25,16 +24,15 @@ def cadastrar_emprestimo():
                     return redirect(url_for('emprestimo.cadastrar_emprestimo'))
                 conn.execute(text('''
                     INSERT INTO Emprestimos
-                      (Usuario_id, Livro_id, Data_emprestimo, Data_devolucao_prevista, Data_devolucao_real, Status_emprestimo)
+                      (Usuario_id, Livro_id, Data_emprestimo)
                     VALUES
-                      (:Usuario_id, :Livro_id, :Data_emprestimo, :Data_devolucao_prevista, :Data_devolucao_real, :Status_emprestimo)
+                      (:Usuario_id, :Livro_id, :Data_emprestimo)
                 '''), {
                     'Usuario_id': current_user.id,
                     'Livro_id': id_livro,
                     'Data_emprestimo': data_emprestimo,
-                    'Data_devolucao_prevista': data_devolucao,
-                    'Data_devolucao_real': data_devolucao_real,
-                    'Status_emprestimo': status_emprestimo
+                    # 'Data_devolucao_prevista': data_devolucao,
+                    # 'Status_emprestimo': status_emprestimo
                 })
                 #atualizando a quantidade de livros
                 # conn.execute(text("""
@@ -112,3 +110,21 @@ def deletar_emprestimo(id):
             conn.close()
     return redirect(url_for('emprestimo.listar_emprestimos'))
 
+
+@emprestimo_bp.route('/devolucao_emprestimo/<int:id>')
+@login_required
+def devolucao_emprestimo(id):
+    with engine.connect() as conn:
+        data_hoje = date.today()
+        conn.execute(
+                text("""
+                    UPDATE Emprestimos
+                    SET Data_devolucao_real = :data,
+                        Status_emprestimo = 'devolvido'
+                    WHERE ID_emprestimo = :id
+                """),
+                {"data": data_hoje, "id": id}
+            )
+        conn.commit()
+        conn.close()
+    return redirect(url_for('emprestimo.listar_emprestimos'))
