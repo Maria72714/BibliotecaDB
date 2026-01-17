@@ -35,24 +35,20 @@ CREATE TABLE Livros (
     FOREIGN KEY (Editora_id) REFERENCES Editoras(ID_editora)
 );
 
-CREATE TABLE Usuarios (
-    ID_usuario INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Usuarios ( ID_usuario INT AUTO_INCREMENT PRIMARY KEY,
     Nome_usuario VARCHAR(255) NOT NULL,
     Email VARCHAR(255) UNIQUE,
-    Senha VARCHAR(255),
+    Senha VARCHAR(255), 
     Numero_telefone VARCHAR(15),
-    Data_inscricao DATE,
-    Multa_atual DECIMAL(10, 2)
-);
+    Data_inscricao DATE NOT NULL DEFAULT (CURDATE()),
+    Multa_atual DECIMAL(10, 2) NOT NULL DEFAULT 0.00 );
 
-CREATE TABLE Emprestimos (
-    ID_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
-    Usuario_id INT,
+CREATE TABLE Emprestimos ( 
+    ID_emprestimo INT AUTO_INCREMENT PRIMARY KEY, 
+    Usuario_id INT, 
     Livro_id INT,
     Data_emprestimo DATE,
-    Data_devolucao_prevista DATE,
-    Data_devolucao_real DATE,
-    Status_emprestimo ENUM('pendente', 'devolvido', 'atrasado'),
-    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario),
-    FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro)
-);
+    Data_devolucao_prevista DATE, 
+    Data_devolucao_real DATE NULL, 
+    Status_emprestimo ENUM('pendente', 'devolvido', 'atrasado', 'cancelado') DEFAULT NULL, 
+    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario), FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro) ON DELETE SET NULL );

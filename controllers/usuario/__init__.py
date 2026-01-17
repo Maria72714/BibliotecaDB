@@ -13,7 +13,6 @@ def cadastro_usuario():
         email = request.form['email']
         senha = request.form['senha']
         telefone = request.form['numero_telefone']
-        data = request.form["data_inscricao"]
         multa = request.form["multa_atual"]
         
         senha_hash = generate_password_hash(senha)
@@ -29,14 +28,13 @@ def cadastro_usuario():
             else:
                 query = text("""
                             INSERT INTO Usuarios
-                            VALUES (DEFAULT, :nome, :email, :senha_hash, :telefone, :data, :multa)
-                            """)
+                           (Nome_usuario, Email, Senha, Numero_telefone, Multa_atual) VALUES
+                              (:nome, :email, :senha_hash, :telefone, :multa) """)
                 conn.execute(query, {
                     "nome": nome,
                     "email": email,
                     "senha_hash": senha_hash,
                     "telefone": telefone,
-                    "data": data,
                     "multa": multa
                 })
                 conn.commit()
