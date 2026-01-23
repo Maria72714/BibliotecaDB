@@ -128,3 +128,9 @@ def devolucao_emprestimo(id):
         conn.commit()
         conn.close()
     return redirect(url_for('emprestimo.listar_emprestimos'))
+
+
+@emprestimo_bp.route('/logs_emprestimo')
+# @login_required
+def logs_emprestimo():
+    return render_template('logs_emprestimo.html')

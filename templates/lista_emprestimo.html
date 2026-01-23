@@ -9,9 +9,13 @@
 <div class="pagina-lista">
   <h1>Listar Emprestimo</h1>
   <div class="wrapper">
-  <form action="{{ url_for('emprestimo.cadastrar_emprestimo') }}">
+  <form action="{{ url_for('emprestimo.cadastrar_emprestimo') }}" class="btn-registro">
       <input type="submit" value="Registrar Emprestimo">
-      </form>
+  </form>
+  <form action="{{ url_for('emprestimo.logs_emprestimo') }}" class="btn-log">
+    <input type="submit" value="vizualizar logs">
+  </form>
+
     <div class="tabela-wrapper">
       <table class="tabela">
         <thead>

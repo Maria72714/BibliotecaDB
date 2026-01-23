@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Logs de Emprestimos{% endblock %}
+
+{% block conteudo %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/logs.css') }}">
+
+<div class="pagina-lista">
+  <h1>Logs Emprestimo</h1>
+  <div class="wrapper">
+  
+    <div class="tabela-wrapper">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Operação</th>
+            <th>Campo</th>
+            <th>Valor Anterior</th>
+            <th>Valor Novo</th>
+            <th>Usuário</th>
+          </tr>
+        </thead>
+          <tbody>
+              {% for emprestimo in rows %}
+              <tr>
+              <td>{{ emprestimo.ID_emprestimo }}</td>
+              <td>{{ emprestimo.Usuario_id }}</td>
+              <td>{{ emprestimo.Livro_id }}</td>
+              <td>{{ emprestimo.Data_emprestimo }}</td>
+              <td>{{ emprestimo.Data_devolucao_prevista }}</td>
+              <td>{{ emprestimo.Data_devolucao_real}}</td>
+              <td>{{ emprestimo.Status_emprestimo }}</td>
+              {% endfor %}
+          </tbody>
+          
+      </table>
+    </div>
+  </div>
+    
+</div>
+{% endblock %}
+
+
