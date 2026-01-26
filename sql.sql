@@ -47,8 +47,22 @@ CREATE TABLE Emprestimos (
     ID_emprestimo INT AUTO_INCREMENT PRIMARY KEY, 
     Usuario_id INT, 
     Livro_id INT,
-    Data_emprestimo DATE,
+    Data_emprestimo DATE DEFAULT CURRENT_DATE,
     Data_devolucao_prevista DATE, 
     Data_devolucao_real DATE NULL, 
     Status_emprestimo ENUM('pendente', 'devolvido', 'atrasado', 'cancelado') DEFAULT NULL, 
     FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario), FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro) ON DELETE SET NULL );
+
+CREATE TABLE Log_Emprestimos (
+    ID_log INT AUTO_INCREMENT PRIMARY KEY,
+    Data_log DATETIME,
+    Usuario_id INT,
+    Emprestimo_id INT,
+    Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
+    Campo VARCHAR(100),
+    Valor_Anterior TEXT,
+    Valor_Novo TEXT,
+    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario),
+    FOREIGN KEY (Emprestimo_id) REFERENCES Emprestimos(ID_emprestimo)
+    
+);

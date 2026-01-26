@@ -9,36 +9,32 @@ from datetime import date
 
 emprestimo_bp = Blueprint("emprestimo", __name__, static_folder="static", template_folder="templates")
 
-
-
-
-
-
 @emprestimo_bp.route('/cadastrar_emprestimo', methods = ['POST','GET'])
 @login_required
 def cadastrar_emprestimo():
     if request.method == 'POST':
         id_livro = request.form['id_livro']
-        data_emprestimo = request.form['data_emprestimo']
-        # data_devolucao = request.form['data_devolucao']
+        data_devolucao_prevista = request.form['data_devolucao_prevista']
+        # data_d
         # status_emprestimo = request.form['status_emprestimo']
 
         with engine.connect() as conn:
             try:
                 qtd_livro = conn.execute(text('SELECT Quantidade_disponivel from Livros WHERE ID_livro = :id_livro'),{'id_livro':id_livro}).scalar()
-                if qtd_livro < 1:
+                if qtd_livro == 0:
                     flash("livro não pode ser cadastrado, pois não há mais disponivel na biblioteca!", 'error')
                     return redirect(url_for('emprestimo.cadastrar_emprestimo'))
                 conn.execute(text('''
                     INSERT INTO Emprestimos
-                      (Usuario_id, Livro_id, Data_emprestimo)
+                      (Usuario_id, Livro_id, Data_emprestimo,  Data_devolucao_prevista, Data_devolucao_real, Status_emprestimo)
                     VALUES
-                      (:Usuario_id, :Livro_id, :Data_emprestimo)
+                      (:Usuario_id, :Livro_id, :Data_emprestimo, :Data_devolucao_prevista, NULL, :Status_emprestimo)
                 '''), {
                     'Usuario_id': current_user.id,
-                    'Livro_id': id_livro,
-                    'Data_emprestimo': data_emprestimo,
-                    
+                    'Livro_id': int(id_livro),
+                    'Data_emprestimo': date.today(),
+                    'Data_devolucao_prevista': data_devolucao_prevista,
+                    'Status_emprestimo': 'pendente'
                 })
                 conn.commit()
             
@@ -71,28 +67,38 @@ def editar_emprestimo(id):
             data_devolucao_prevista = request.form['Data_devolucao_prevista']
             data_devolucao_real = request.form['Data_devolucao_real']
             status_emprestimo = request.form['Status_emprestimo']
+            
+            try:
+                conn.execute(text("""
+                    UPDATE Emprestimos
+                    SET Data_emprestimo = :data_emprestimo,
+                        Data_devolucao_prevista = :data_devolucao_prevista,
+                        Data_devolucao_real = :data_devolucao_real,
+                        Status_emprestimo = :status_emprestimo
+                    WHERE ID_emprestimo = :id
+                """), {
+                    "data_emprestimo": data_emprestimo,
+                    "data_devolucao_prevista": data_devolucao_prevista,
+                    "data_devolucao_real": data_devolucao_real,
+                    "status_emprestimo": status_emprestimo,
+                    "id": id
+                })
+                conn.commit()
 
-            conn.execute(text("""
-                UPDATE Emprestimos
-                SET Data_emprestimo = :data_emprestimo,
-                    Data_devolucao_prevista = :data_devolucao_prevista,
-                    Data_devolucao_real = :data_devolucao_real,
-                    Status_emprestimo = :status_emprestimo
-                WHERE ID_emprestimo = :id
-            """), {
-                "data_emprestimo": data_emprestimo,
-                "data_devolucao_prevista": data_devolucao_prevista,
-                "data_devolucao_real": data_devolucao_real,
-                "status_emprestimo": status_emprestimo,
-                "id": id
-            })
-            conn.commit()
+            except DBAPIError as e:
+                mensagem = e.orig.args[1]
+                flash(f"Erro ao atualizar empréstimo: {mensagem}", 'error')
+            
+            finally:
+                conn.close()
+                return redirect(url_for('emprestimo.listar_emprestimos'))
 
-
-        emprestimos = conn.execute(text("""
-                SELECT * FROM Emprestimos
-                WHERE ID_emprestimo = :id
-            """), {"id": id}).mappings().fetchone()
+        with engine.connect() as conn:
+            emprestimos = conn.execute(text("""
+                    SELECT * FROM Emprestimos
+                    WHERE ID_emprestimo = :id
+                """), {"id": id}).mappings().fetchone()
+            conn.close()
 
     return render_template('editar_emprestimo.html', Emprestimos = emprestimos)
 

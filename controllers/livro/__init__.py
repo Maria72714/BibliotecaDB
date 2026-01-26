@@ -3,6 +3,7 @@ from flask_login import login_required
 from extensions.database import engine
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
+import pymysql
 
 livro_bp = Blueprint("livro", __name__, static_folder="static", template_folder="templates")
 
@@ -98,10 +99,15 @@ def cadastro_livro():
                     'resumo': resumo
                 })
                 conn.commit()
-            except pymysql.MySQLError as e:
-                mensagem = e.args[1]
+ 
+            except DBAPIError as e:
+                mensagem = e.orig.args[1]
                 flash(f"Erro ao cadastrar livro: {mensagem}", 'error')
                 return redirect(url_for('livro.cadastro_livro'))
+            
+            finally:
+                conn.close()
+
         return redirect(url_for('auth.index'))
     return render_template('cadastro_livro.html')
 
