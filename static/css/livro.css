@@ -65,6 +65,15 @@ input {
 
 }
 
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #2c3e50;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
 
 button {
     display: block;

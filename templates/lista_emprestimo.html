@@ -12,17 +12,20 @@
   <form action="{{ url_for('emprestimo.cadastrar_emprestimo') }}" class="btn-registro">
       <input type="submit" value="Registrar Emprestimo">
   </form>
-  <form action="{{ url_for('emprestimo.logs_emprestimo') }}" class="btn-log">
-    <input type="submit" value="vizualizar logs">
-  </form>
+
+  {% if current_user.is_authenticated %}
+    <form action="{{ url_for('emprestimo.logs_emprestimo') }}" class="btn-log">
+      <input type="submit" value="Visualizar logs">
+    </form>
+  {% endif %}
 
     <div class="tabela-wrapper">
       <table class="tabela">
         <thead>
           <tr>
               <th>ID Emprestimo</th>
-              <th>Usuario_id</th>
-              <th>Livro_id</th>
+              <th>Usuário</th>
+              <th>Livro</th>
               <th>Data Emprestimo</th>
               <th>Devolução Prevista</th>
               <th>Devolução Real</th>
@@ -34,8 +37,8 @@
               {% for emprestimo in rows %}
               <tr>
               <td>{{ emprestimo.ID_emprestimo }}</td>
-              <td>{{ emprestimo.Usuario_id }}</td>
-              <td>{{ emprestimo.Livro_id }}</td>
+              <td>{{ emprestimo.Usuario_Nome }}</td>
+              <td>{{ emprestimo.Livro_Titulo }}</td>
               <td>{{ emprestimo.Data_emprestimo }}</td>
               <td>{{ emprestimo.Data_devolucao_prevista }}</td>
               <td>{{ emprestimo.Data_devolucao_real}}</td>
@@ -43,7 +46,7 @@
               <td class="acoes">
                 
                 <a href="{{ url_for('emprestimo.deletar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-excluir">Excluir</a>
-                <a href="{{ url_for('emprestimo.editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">editar</a>
+                <a href="{{ url_for('emprestimo.editar_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">Editar</a>
                 <a href="{{ url_for('emprestimo.devolucao_emprestimo', id=emprestimo.ID_emprestimo) }}" class="btn-acao btn-editar">Devolver</a>
               </td>
               </tr>

@@ -10,18 +10,38 @@
             <div class="form1">
                 <label for="titulo">Título</label>
                 <input id="titulo" name="titulo" type="text">
+                
                 <label for="autor">Autor</label>
-                <input id="autor" name="autor" type="text">
+                <select name="autor" id="autor">
+                    <option value="none">Autor</option>
+                    {% for autor in autores %}
+                        <option value="{{ autor.ID_autor }}">{{ autor.Nome_autor }}</option>
+                    {% endfor %}
+                </select>
+
                 <label for="isbn">ISBN</label>
                 <input id="isbn" name="isbn" type="text">
                 <label for="ano_publicacao">Ano de Publicação</label>
                 <input id="ano_publicacao" name="ano_publicacao" type="number"> 
             </div>
+
             <div class="form2">
                 <label for="genero">Gênero</label>
-                <input id="genero" name="genero" type="text">
+                <select name="genero" id="genero">
+                    <option value="none">Gênero</option>
+                    {% for genero in generos %}
+                        <option value="{{ genero.ID_genero }}">{{ genero.Nome_genero }}</option>
+                    {% endfor %}
+                </select>
+
                 <label for="editora">Editora</label>
-                <input id="editora" name="editora" type="text">
+                <select name="editora" id="editora">
+                    <option value="none">Editora</option>
+                    {% for editora in editoras %}
+                        <option value="{{ editora.ID_editora }}">{{ editora.Nome_editora }}</option>
+                    {% endfor %}
+                </select>
+                    
                 <label for="qtd_disponivel">Disponível</label>
                 <input id="qtd_disponivel" name="qtd_disponivel" type="number">
                 <label for="resumo">Resumo</label>

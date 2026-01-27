@@ -15,8 +15,6 @@ def cadastrar_emprestimo():
     if request.method == 'POST':
         id_livro = request.form['id_livro']
         data_devolucao_prevista = request.form['data_devolucao_prevista']
-        # data_d
-        # status_emprestimo = request.form['status_emprestimo']
 
         with engine.connect() as conn:
             try:
@@ -26,15 +24,14 @@ def cadastrar_emprestimo():
                     return redirect(url_for('emprestimo.cadastrar_emprestimo'))
                 conn.execute(text('''
                     INSERT INTO Emprestimos
-                      (Usuario_id, Livro_id, Data_emprestimo,  Data_devolucao_prevista, Data_devolucao_real, Status_emprestimo)
+                      (Usuario_id, Livro_id, Data_emprestimo,  Data_devolucao_prevista, Data_devolucao_real)
                     VALUES
-                      (:Usuario_id, :Livro_id, :Data_emprestimo, :Data_devolucao_prevista, NULL, :Status_emprestimo)
+                      (:Usuario_id, :Livro_id, :Data_emprestimo, :Data_devolucao_prevista, NULL)
                 '''), {
                     'Usuario_id': current_user.id,
                     'Livro_id': int(id_livro),
                     'Data_emprestimo': date.today(),
                     'Data_devolucao_prevista': data_devolucao_prevista,
-                    'Status_emprestimo': 'pendente'
                 })
                 conn.commit()
             
@@ -53,7 +50,10 @@ def cadastrar_emprestimo():
 @emprestimo_bp.route('/emprestimos')
 def listar_emprestimos():
     with engine.connect() as conn:
-        query = text("SELECT * FROM Emprestimos")
+        query = text('''SELECT e.*, l.Titulo AS Livro_Titulo, u.Nome_usuario AS Usuario_Nome
+                        FROM Emprestimos e 
+                        JOIN Livros l ON e.Livro_id = l.ID_livro
+                        JOIN Usuarios u ON e.Usuario_id = u.ID_usuario''')
         rows = conn.execute(query).mappings().fetchall()
     return render_template('lista_emprestimo.html', rows=rows)
 
@@ -68,6 +68,9 @@ def editar_emprestimo(id):
             data_devolucao_real = request.form['Data_devolucao_real']
             status_emprestimo = request.form['Status_emprestimo']
             
+            # Converter datas vazias para None
+            if not data_devolucao_real or data_devolucao_real == '' or data_devolucao_real == 'None':
+                data_devolucao_real = None
             try:
                 conn.execute(text("""
                     UPDATE Emprestimos
@@ -124,15 +127,14 @@ def deletar_emprestimo(id):
 @login_required
 def devolucao_emprestimo(id):
     with engine.connect() as conn:
-        data_hoje = date.today()
         conn.execute(
                 text("""
                     UPDATE Emprestimos
-                    SET Data_devolucao_real = :data,
-                        Status_emprestimo = 'devolvido'
+                    SET Status_emprestimo = 'devolvido',
+                    Data_devolucao_real = NULL
                     WHERE ID_emprestimo = :id
                 """),
-                {"data": data_hoje, "id": id}
+                {"id": id}
             )
         conn.commit()
         conn.close()
@@ -140,7 +142,7 @@ def devolucao_emprestimo(id):
 
 
 @emprestimo_bp.route('/logs_emprestimo', methods = ['POST', 'GET'])
-# @login_required
+@login_required
 def logs_emprestimo():
     with engine.connect() as conn:
         logs = conn.execute(text('SELECT * from Log_Emprestimos'))

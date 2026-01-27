@@ -67,3 +67,23 @@ CREATE TABLE Log_Emprestimos (
     FOREIGN KEY (Emprestimo_id) REFERENCES Emprestimos(ID_emprestimo)
     
 );
+
+CREATE TABLE Log_Usuarios(
+    Data_log DATETIME,
+    Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
+    Usuario_id INT,
+    Campo VARCHAR(100),
+    Valor_Anterior TEXT,
+    Valor_Novo TEXT,
+    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario)
+);
+
+CREATE TABLE Log_Livros(
+    Data_log DATETIME,
+    Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
+    Livro_id INT,
+    Campo VARCHAR(100),
+    Valor_Anterior TEXT,
+    Valor_Novo TEXT,
+    FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro)
+); 

@@ -18,7 +18,7 @@
         <input id="Data_devolucao_prevista" name="Data_devolucao_prevista" type="text" placeholder="{{ Emprestimos.Data_devolucao_prevista}}" value="{{ Emprestimos.Data_devolucao_prevista}}">
 
         <label for="Data_devolucao_real">Data_devolucao_real</label>
-        <input id="Data_devolucao_real" name="Data_devolucao_real" type="text" placeholder="{{ Emprestimos.Data_devolucao_real}}" value="{{ Emprestimos.Data_devolucao_real}}">
+        <input id="Data_devolucao_real" name="Data_devolucao_real" type="text" placeholder="Deixe em branco se não devolvido" value="{{ Emprestimos.Data_devolucao_real if Emprestimos.Data_devolucao_real else ''}}" />
 
         <label for="Status_emprestimo">Status_emprestimo</label>
         <input id="Status_emprestimo" name="Status_emprestimo" type="text" placeholder="{{ Emprestimos.Status_emprestimo}}" value="{{ Emprestimos.Status_emprestimo}}">

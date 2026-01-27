@@ -3,7 +3,6 @@ from flask_login import login_required
 from extensions.database import engine
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
-import pymysql
 
 livro_bp = Blueprint("livro", __name__, static_folder="static", template_folder="templates")
 
@@ -13,81 +12,46 @@ livro_bp = Blueprint("livro", __name__, static_folder="static", template_folder=
 def cadastro_livro():
     if request.method == 'POST':
         titulo = request.form['titulo']
-        autor = request.form['autor']
+        autor_id = request.form['autor']
         isbn = request.form['isbn']
         ano_publicacao = request.form['ano_publicacao']
-        genero = request.form['genero']
-        editora = request.form['editora']
+        genero_id = request.form['genero']
+        editora_id = request.form['editora']
         quantidade = request.form['qtd_disponivel'] 
         resumo = request.form['resumo']
 
         with engine.connect() as conn:
-            query_editora = text("""
-                SELECT ID_editora FROM Editoras
-                WHERE Nome_editora = :editora
-            """)
+             query = text("""
+                 INSERT INTO Livros
+                 VALUES (
+                       DEFAULT,
+                       :titulo, 
+                       :autor, 
+                       :isbn, 
+                       :publicacao, 
+                       :genero,
+                       :editora,
+                       :quantidade,
+                       :resumo
+                       )
+             """)
 
-            query_genero = text("""
-                SELECT ID_genero FROM Generos
-                WHERE Nome_genero = :genero
-            """)
-
-            query_autor = text("""
-                SELECT ID_autor from Autores
-                WHERE Nome_autor = :autor
-            """)
-
-            query = text("""
-                INSERT INTO Livros
-                VALUES (
-                      DEFAULT,
-                      :titulo, 
-                      :autor, 
-                      :isbn, 
-                      :publicacao, 
-                      :genero,
-                      :editora,
-                      :quantidade,
-                      :resumo
-                      )
-            """)
-
-            editora_id = conn.execute(query_editora, {"editora": editora}).scalar()
-            genero_id = conn.execute(query_genero, {"genero": genero}).scalar()
-            autor_id = conn.execute(query_autor, {"autor": autor}).scalar()
-
-            # Auto-cria vinculados se não existirem
-            if not editora_id:
+             if editora_id == 'none' or editora_id == '':
                 flash('Editora não encontrada, cadastre para continuar!','error')
                 return redirect(url_for('editora.cadastro_editora'))
-                '''sql = text("""
-                    INSERT INTO Editoras 
-                    VALUES (DEFAULT, :editora, NULL)
-                """)
-                conn.execute(sql, {"editora":editora})
-                flash("editora ainda não cadastrada")'''
-                
-            if not genero_id:
+
+             if genero_id == 'none':
                 flash('Genero não encontrado, cadastre para continuar!', 'error')
                 return redirect(url_for('genero.cadastro_genero'))
-                '''sql = text("""
-                    INSERT INTO Generos 
-                    VALUES (DEFAULT, :genero)
-                """)
-                conn.execute(sql, {"genero":genero})
-                flash("gênero ainda não cadastrado")'''
-            if not autor_id:
+
+             if autor_id == 'none':
                 flash('autor não encontrado, cadastre para continuar!', 'error')
                 return redirect(url_for('autor.cadastro_autor'))
-                '''sql = text("""
-                    INSERT INTO Autores 
-                    VALUES (DEFAULT, :autor, NULL, NULL, NULL)
-                """)
-                conn.execute(sql, {"autor":autor})
-                flash("autor ainda não cadastrado")'''
-            
 
-            try:
+             try:
+                autor_id = int(autor_id)
+                editora_id = int(editora_id)
+                genero_id = int(genero_id)
                 conn.execute(query, {
                     'titulo': titulo,
                     'autor': autor_id,
@@ -100,16 +64,22 @@ def cadastro_livro():
                 })
                 conn.commit()
  
-            except DBAPIError as e:
-                mensagem = e.orig.args[1]
-                flash(f"Erro ao cadastrar livro: {mensagem}", 'error')
+             except DBAPIError as e:
+                # mensagem = e.orig.args[1]
+                flash(f"Erro ao cadastrar livro: {e}", 'error')
                 return redirect(url_for('livro.cadastro_livro'))
             
-            finally:
+             finally:
                 conn.close()
 
-        return redirect(url_for('auth.index'))
-    return render_template('cadastro_livro.html')
+        return redirect(url_for('livro.listar_livros'))
+    
+    with engine.connect() as conn:
+        generos = conn.execute(text("SELECT * FROM Generos ORDER BY Nome_genero")).mappings().fetchall()
+        editoras = conn.execute(text("SELECT * FROM Editoras ORDER BY Nome_editora")).mappings().fetchall()
+        autores = conn.execute(text("SELECT * FROM Autores ORDER BY Nome_autor")).mappings().fetchall() 
+        conn.close()
+    return render_template('cadastro_livro.html' , generos=generos, editoras=editoras, autores=autores)
 
 
 @livro_bp.route('/livros')
@@ -200,8 +170,8 @@ def deletar_livro(id):
         try:
             conn.execute(text("DELETE FROM Livros WHERE ID_livro = :id"), {"id": id})
             conn.commit()
-        except pymysql.MySQLError as e:
-            mensagem = e.args[1]
+        except DBAPIError as e:
+            mensagem = e.orig.args[1]
             flash(f"Erro de integridade: {mensagem}", 'error')
         finally:
             conn.close()

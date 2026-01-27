@@ -1,6 +1,10 @@
 # Ignorar pastas __pycache__
 __pycache__/
 
+# Igorar arquivos de ambiente virtual
+venv/
+env/
+
 # Outras exclusões comuns
 *.pyc
 *.pyo
