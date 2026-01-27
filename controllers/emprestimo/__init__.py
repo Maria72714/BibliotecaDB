@@ -91,7 +91,7 @@ def editar_emprestimo(id):
             
             finally:
                 conn.close()
-                return redirect(url_for('emprestimo.listar_emprestimos'))
+            return redirect(url_for('emprestimo.listar_emprestimos'))
 
         with engine.connect() as conn:
             emprestimos = conn.execute(text("""

@@ -2,5 +2,7 @@ import pymysql
 pymysql.install_as_MySQLdb()
 
 from sqlalchemy import create_engine
+from urllib.parse import quote_plus
 
-engine = create_engine('mysql+pymysql://root:29062007@localhost/db_atividade17')
+senha = quote_plus("admin")  # Substitua 'sua_senha_aqui' pela senha correta do banco de dados
+engine = create_engine(f'mysql+pymysql://root:{senha}@localhost/db_atividade17')
