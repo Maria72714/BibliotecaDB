@@ -14,7 +14,6 @@ emprestimo_bp = Blueprint("emprestimo", __name__, static_folder="static", templa
 def cadastrar_emprestimo():
     if request.method == 'POST':
         id_livro = request.form['livro']
-        data_devolucao_prevista = request.form['data_devolucao_prevista']
 
         with engine.connect() as conn:
             try:
@@ -27,14 +26,12 @@ def cadastrar_emprestimo():
                     return redirect(url_for('emprestimo.cadastrar_emprestimo'))
                 conn.execute(text('''
                     INSERT INTO Emprestimos
-                      (Usuario_id, Livro_id, Data_emprestimo,  Data_devolucao_prevista, Data_devolucao_real)
+                      (Usuario_id, Livro_id)
                     VALUES
-                      (:Usuario_id, :Livro_id, :Data_emprestimo, :Data_devolucao_prevista, NULL)
+                      (:Usuario_id, :Livro_id)
                 '''), {
                     'Usuario_id': current_user.id,
-                    'Livro_id': int(id_livro),
-                    'Data_emprestimo': date.today(),
-                    'Data_devolucao_prevista': data_devolucao_prevista,
+                    'Livro_id': int(id_livro)
                 })
                 conn.commit()
             
@@ -148,5 +145,9 @@ def devolucao_emprestimo(id):
 @login_required
 def logs_emprestimo():
     with engine.connect() as conn:
-        logs = conn.execute(text('SELECT * from Log_Emprestimos'))
-    return render_template('logs_emprestimo.html', logs = logs)
+        logs_emprestimo = conn.execute(text('SELECT * from Log_Emprestimos'))
+        logs_livro = conn.execute(text('SELECT * from Log_Livros'))
+        logs_usuario = conn.execute(text('SELECT * from Log_Usuarios'))
+        logs_multa = conn.execute(text('SELECT * from Log_Multas'))
+        conn.close()
+    return render_template('logs_emprestimo.html', logs = logs_emprestimo, logs_livro=logs_livro, logs_usuario=logs_usuario, logs_multa=logs_multa)
