@@ -94,3 +94,4 @@ CREATE TABLE Log_Multas(
     Valor_Novo DECIMAL(10, 2),
     FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario) ON DELETE SET NULL
 );
+

@@ -65,13 +65,13 @@ delimiter ;
 
 -- criar um trigger para retornar um alert quando o usuário não selecionar um livro no cadastro de empréstimo
 delimiter //
-create trigger validacao_livro_selecionado --cancelado
-before insert on Emprestimos
+create trigger validacao_data_publicacao -- feito
+before insert on Livros
 for each row 
 begin 
-	if new.Livro_id is null then
+	if new.Data_publicacao > NOW() then
 		signal sqlstate "45000"
-		set message_text = "Livro não selecionado";
+		set message_text = "Data de puyblicação inválida";
     end if;
 end //
 delimiter ;
@@ -426,6 +426,18 @@ END //
 
 DELIMITER ;
 
+
+
+DELIMITER //
+CREATE TRIGGER alterar_log_livro_id_null
+BEFORE DELETE ON Livros
+FOR EACH ROW
+
+BEGIN 
+    UPDATE Log_Livros SET Livro_id = NULL WHERE Livro_id = OLD.ID_livro;
+END //
+
+DELIMITER ;
 
 
 -- ==================== FUNCTIONS ====================

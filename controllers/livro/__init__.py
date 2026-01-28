@@ -168,6 +168,7 @@ def editar_livro(id):
 def deletar_livro(id):
     with engine.connect() as conn:
         try:
+            conn.execute(text("UPDATE Log_Livros SET Livro_id = NULL WHERE Livro_id = :id"), {"id": id})
             conn.execute(text("DELETE FROM Livros WHERE ID_livro = :id"), {"id": id})
             conn.commit()
         except DBAPIError as e:
