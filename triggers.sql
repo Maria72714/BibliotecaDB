@@ -373,7 +373,7 @@ DELIMITER ;
 -- Log DELETE em livros
 DELIMITER //
 CREATE TRIGGER log_livro_delete
-AFTER DELETE ON Livros
+BEFORE DELETE ON Livros
 FOR EACH ROW
 BEGIN
     INSERT INTO Log_Livros
@@ -403,18 +403,37 @@ CREATE TRIGGER log_usuario_update
 AFTER UPDATE ON Usuarios
 FOR EACH ROW
 BEGIN
-    IF OLD.Email <> NEW.Email THEN
+    IF COALESCE(OLD.Nome_usuario,'') <> COALESCE(NEW.Nome_usuario,'') THEN
         INSERT INTO Log_Usuarios
+        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
+        VALUES
+        (NOW(), 'UPDATE', NEW.ID_usuario, 'Nome_usuario', OLD.Nome_usuario, NEW.Nome_usuario);
+    END IF;
+    IF COALESCE(OLD.Email,'') <> COALESCE(NEW.Email,'') THEN
+        INSERT INTO Log_Usuarios
+        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
         VALUES
         (NOW(), 'UPDATE', NEW.ID_usuario, 'Email', OLD.Email, NEW.Email);
+    END IF;
+    IF COALESCE(OLD.Numero_telefone,'') <> COALESCE(NEW.Numero_telefone,'') THEN
+        INSERT INTO Log_Usuarios
+        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
+        VALUES
+        (NOW(), 'UPDATE', NEW.ID_usuario, 'Numero_telefone', OLD.Numero_telefone, NEW.Numero_telefone);
+    END IF;
+    IF COALESCE(OLD.Data_inscricao,'0000-00-00') <> COALESCE(NEW.Data_inscricao,'0000-00-00') THEN
+        INSERT INTO Log_Usuarios
+        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
+        VALUES
+        (NOW(), 'UPDATE', NEW.ID_usuario, 'Data_inscricao', OLD.Data_inscricao, NEW.Data_inscricao);
     END IF;
 END//
 DELIMITER ;
 
 -- Log DELETE em usuários
-DELIMITER //	
+DELIMITER //
 CREATE TRIGGER log_usuario_delete
-AFTER DELETE ON Usuarios
+BEFORE DELETE ON Usuarios
 FOR EACH ROW
 BEGIN
     INSERT INTO Log_Usuarios

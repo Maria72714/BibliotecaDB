@@ -100,7 +100,7 @@ CREATE TABLE Livros (
     FOREIGN KEY (Genero_id) REFERENCES Generos(ID_genero),
 
 
-    FOREIGN KEY (Editora_id) REFERENCES Editoras(ID_editora)
+    FOREIGN KEY (Editora_id) REFERENCES Editoras(ID_editora) ON DELETE SET NULL
 
 
 );
