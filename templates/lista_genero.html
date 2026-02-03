@@ -9,6 +9,10 @@
 <div class="pagina-lista">
   <h1>Gêneros Cadastrados</h1>
 
+  <form action="{{ url_for('genero.cadastro_genero') }}" class="btn-registro">
+      <input type="submit" value="Registrar Gênero">
+  </form>
+
   <div class="tabela-wrapper">
     <table class="tabela">
       <thead>

@@ -6,21 +6,15 @@
  <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_livro.css') }}">
  
     <h1>Editar Emprestimo</h1>
-    <form action="{{ url_for('emprestimo.editar_emprestimo', id=Emprestimos.ID_emprestimo) }}" method="post">
-        <label for="ID_emprestimo">ID_emprestimo</label>
-        <input id="ID_emprestimo" name="ID_emprestimo" type="text" placeholder="{{ Emprestimos.ID_emprestimo}}" value="{{ Emprestimos.ID_emprestimo}}">
+    <form action="{{ url_for('emprestimo.editar_emprestimo', id=Emprestimos.ID_emprestimo) }}" method="post">      
 
-      
-        <label for="Data_emprestimo">Data_emprestimo</label>
-        <input id="Data_emprestimo" name="Data_emprestimo" type="text" placeholder="{{ Emprestimos.Data_emprestimo}}" value="{{ Emprestimos.Data_emprestimo}}">
+        <label for="Data_devolucao_prevista">Data de Devolução Prevista</label>
+        <input id="Data_devolucao_prevista" name="Data_devolucao_prevista" type="date" placeholder="{{ Emprestimos.Data_devolucao_prevista}}" value="{{ Emprestimos.Data_devolucao_prevista}}">
 
-        <label for="Data_devolucao_prevista">Data_devolucao_prevista</label>
-        <input id="Data_devolucao_prevista" name="Data_devolucao_prevista" type="text" placeholder="{{ Emprestimos.Data_devolucao_prevista}}" value="{{ Emprestimos.Data_devolucao_prevista}}">
-
-        <label for="Data_devolucao_real">Data_devolucao_real</label>
+        <label for="Data_devolucao_real">Data de Devolução Real</label>
         <input id="Data_devolucao_real" name="Data_devolucao_real" type="date" value="{{ Emprestimos.Data_devolucao_real if Emprestimos.Data_devolucao_real else ''}}"/>
 
-        <label for="Status_emprestimo">Status_emprestimo</label>
+        <label for="Status_emprestimo">Status do Emprestimo</label>
         <input id="Status_emprestimo" name="Status_emprestimo" type="text" placeholder="{{ Emprestimos.Status_emprestimo}}" value="{{ Emprestimos.Status_emprestimo}}">
         <button type="submit">Enviar</button>
     </form>

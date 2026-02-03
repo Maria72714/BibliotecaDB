@@ -12,6 +12,7 @@
         <nav>
             <h2><a href="{{ url_for('auth.index' ) }}" class="logo">📚 Biblioteca</a></h2>
             <ul>
+                <li><a href="{{ url_for('emprestimo.logs_emprestimo' ) }}">Logs</a></li>
                 <li><a href="{{ url_for('emprestimo.listar_emprestimos') }}">Empréstimo</a></li>
                 <li><a href="{{ url_for('autor.lista_autores') }}">Autores</a></li>
                 <li><a href="{{ url_for('editora.listar_editoras') }}">Editoras</a></li>
@@ -19,15 +20,12 @@
                 <li><a href="{{ url_for('livro.listar_livros') }}">Livros</a></li>
                 <li><a href="{{ url_for('livro.cadastro_livro') }}">Cadastrar Livro</a></li>
                 {% if not current_user.is_authenticated %}
-                <li><a href="{{ url_for('genero.cadastro_genero') }}">Cadastro Gênero</a></li>
                 <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                <li><a href="{{ url_for('usuario.cadastro_usuario') }}">Cadastro</a></li>
+
                 {% else %}
-                <li><a href="{{ url_for('genero.cadastro_genero') }}">Cadastro Gênero</a></li>
-                <li><a href="{{ url_for('autor.cadastro_autor') }}">Cadastro Autor</a></li>
-                <li><a href="{{ url_for('editora.cadastro_editora') }}">Cadastro Editora</a></li>
                 <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                 {% endif %}
-                <li><a href="{{ url_for('usuario.cadastro_usuario') }}">Cadastro</a></li>
             </ul>
         </nav>
         <main>
