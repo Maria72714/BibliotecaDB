@@ -8,6 +8,10 @@
 <div class="pagina-lista">
   <h1>Autores Cadastrados</h1>
 
+
+  <form action="{{ url_for('autor.cadastro_autor') }}" class="btn-registro" >
+      <input type="submit" value="Registrar Autor">
+  </form>
   <div class="tabela-wrapper">
     <table class="tabela">
       <thead>

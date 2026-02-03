@@ -1,90 +1,87 @@
--- ==================== GATILHOS DE VALIDAÇÃO ==================== 
+-- ============================================================
+-- ================== GATILHOS DE VALIDAÇÃO ===================
+-- ============================================================
 
--- usuario não pode cadastrar um emprestimo se tiver outro atrasado
-delimiter //
-create trigger validacao_emprestimo_atrasado -- feito
-before insert on Emprestimos
-for each row
-begin	
-	declare emprestimo_status varchar(50);
+-- Impede novo empréstimo se o usuário já possuir empréstimo atrasado
+DELIMITER //
+CREATE TRIGGER validacao_emprestimo_atrasado 
+BEFORE INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN	
+	DECLARE emprestimo_status VARCHAR(50);
     
-    select Status_emprestimo
-    into emprestimo_status
-    from Emprestimos	
-    where Usuario_id = new.Usuario_id
-    and Status_emprestimo = 'atrasado';
+    SELECT Status_emprestimo
+    INTO emprestimo_status
+    FROM Emprestimos	
+    WHERE Usuario_id = NEW.Usuario_id
+      AND Status_emprestimo = 'atrasado';
     
-    if emprestimo_status is not null then
-		signal sqlstate "45000"
-        set message_text = "Há um empréstimo atrasado! Conclua-o primeiro.";
-	end if;
-end //
-delimiter ;
+    IF emprestimo_status IS NOT NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Há um empréstimo atrasado! Conclua-o primeiro.';
+	END IF;
+END //
+DELIMITER ;
 
--- o usuário não pode cadastrar uma quantidade negativa de livros
-delimiter //
-create trigger validacao_qtd_livro -- feito
-before insert on Livros
-for each row		
-begin
-	if new.Quantidade_disponivel < 0 then
-		signal sqlstate "45000"
-        set message_text = 'Quantidade de livros não pode ser negativa';
-	end if;
-end //
-delimiter ;
+-- Impede cadastro de livros com quantidade negativa
+DELIMITER //
+CREATE TRIGGER validacao_qtd_livro 
+BEFORE INSERT ON Livros
+FOR EACH ROW		
+BEGIN
+	IF NEW.Quantidade_disponivel < 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Quantidade de livros não pode ser negativa';
+	END IF;
+END //
+DELIMITER ;
 
+-- Impede data de devolução prevista anterior à data do empréstimo
+DELIMITER //
+CREATE TRIGGER validacao_data_devolucao 
+BEFORE INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN
+	IF NEW.Data_devolucao_prevista < NEW.Data_emprestimo THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Data de devolução inconsistente';
+	END IF;
+END //
+DELIMITER ;
 
--- a data de devolução prevista não pode ser anterior à data do empréstimo
-delimiter //
-create trigger validacao_data_devolucao -- feito
-before insert on Emprestimos
-for each row
-begin
-	if new.Data_devolucao_prevista < new.Data_emprestimo then
-		signal sqlstate "45000"
-		set message_text = "Data de devolução inconsistente";
-	end if;
-end //
-delimiter ;
+-- Impede data de devolução real anterior à data do empréstimo
+DELIMITER //
+CREATE TRIGGER validacao_data_devolucao_real 
+BEFORE UPDATE ON Emprestimos
+FOR EACH ROW 
+BEGIN 
+	IF NEW.Data_devolucao_real < NEW.Data_emprestimo THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Data de devolução inconsistente';
+	END IF;
+END //
+DELIMITER ;
 
-
--- a data de devolução real não pode ser anterior à data do empréstimo
-delimiter //
-create trigger validacao_data_devolucao_real --feito
-before update on Emprestimos
-for each row 
-begin 
-	if new.Data_devolucao_real < new.Data_emprestimo then
-		signal sqlstate "45000"
-		set message_text = "Data de devolução inconsistente";
-	end if;
-end //
-delimiter ;
-
-
--- Validar se o ano de publicação do livro é válido
-delimiter //
-create trigger validacao_ano_publicacao -- feito
-before insert on Livros
-for each row 
-begin 
-	if new.Ano_publicacao > YEAR(NOW()) then
-		signal sqlstate "45000"
-		set message_text = "Data de publicação inválida";
-    end if;
-end //
-delimiter ;
+-- Impede ano de publicação maior que o ano atual
+DELIMITER //
+CREATE TRIGGER validacao_ano_publicacao
+BEFORE INSERT ON Livros
+FOR EACH ROW 
+BEGIN 
+	IF NEW.Ano_publicacao > YEAR(NOW()) THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Data de publicação inválida';
+    END IF;
+END //
+DELIMITER ;
 
 
+-- ============================================================
+-- ===== GATILHOS DE ATUALIZAÇÃO AUTOMÁTICA PÓS-EVENTO =========
+-- ============================================================
 
-
--- ==================== GATILHOS DE ATUALIZAÇÃO AUTOMÁTICA PÓS-EVENTO====================:
-
--- Devolução com atraso => atualizar multa_atua
- DELIMITER //
- 
- 
+-- Atualiza a multa do usuário quando há devolução com atraso
+DELIMITER //
 CREATE TRIGGER devolucao_atraso_atualizar_multa 
 AFTER UPDATE ON Emprestimos
 FOR EACH ROW 
@@ -92,25 +89,21 @@ BEGIN
 	DECLARE multa INT;
     
     SET multa = calcular_multa(
-        NEW.data_devolucao_prevista,
-        NEW.data_devolucao_real
+        NEW.Data_devolucao_prevista,
+        NEW.Data_devolucao_real
     );	
     
-	IF NEW.data_devolucao_real IS NOT NULL
-		AND NEW.data_devolucao_real <> '0000-00-00'
-        AND NEW.data_devolucao_real > NEW.data_devolucao_prevista THEN
-        UPDATE Usuarios SET Multa_atual = Multa_atual + multa
+	IF NEW.Data_devolucao_real IS NOT NULL
+       AND NEW.Data_devolucao_real > NEW.Data_devolucao_prevista THEN
+        UPDATE Usuarios 
+        SET Multa_atual = Multa_atual + multa
         WHERE ID_usuario = NEW.Usuario_id;
-		
     END IF;
 END //
 DELIMITER ;
 
-
--- Ao excluir emprestimo => aumentar a quantidade_disponivel
-
+-- Aumenta quantidade do livro ao excluir empréstimo não devolvido
 DELIMITER //
-
 CREATE TRIGGER aumentar_quantidade_excluir_emprestimo
 AFTER DELETE ON Emprestimos
 FOR EACH ROW
@@ -119,70 +112,57 @@ BEGIN
 		UPDATE Livros
 		SET Quantidade_disponivel = Quantidade_disponivel + 1
 		WHERE ID_livro = OLD.Livro_id;
-	END IF ;
+	END IF;
 END //
-
 DELIMITER ;
 
-
--- cancelar emprestimos ao excluir o livro
- 
- DELIMITER //
-
-CREATE TRIGGER excluir_livro_cancelar_emprestimos_pendentes -- feito
+-- Cancela empréstimos pendentes ao excluir um livro
+DELIMITER //
+CREATE TRIGGER excluir_livro_cancelar_emprestimos_pendentes 
 BEFORE DELETE ON Livros
 FOR EACH ROW 
 BEGIN 
-	UPDATE Emprestimos SET Status_emprestimo = 'cancelado', Livro_ID = NULL
+	UPDATE Emprestimos 
+    SET Status_emprestimo = 'cancelado', Livro_id = NULL
 	WHERE Livro_id = OLD.ID_livro
-    AND Status_emprestimo = 'pendente';
-    
-   
+      AND Status_emprestimo = 'pendente';
 END //
 DELIMITER ;
 
--- Ao devolver livro => aumentar a quantidade_disponivel
+-- Aumenta quantidade do livro ao marcar empréstimo como devolvido
 DELIMITER //
-
 CREATE TRIGGER aumentar_quantidade_devolver_emprestimo
 AFTER UPDATE ON Emprestimos
 FOR EACH ROW
 BEGIN
 	IF OLD.Status_emprestimo <> 'devolvido'
-	AND NEW.Status_emprestimo = 'devolvido' THEN
+	   AND NEW.Status_emprestimo = 'devolvido' THEN
 		UPDATE Livros
 		SET Quantidade_disponivel = Quantidade_disponivel + 1
 		WHERE ID_livro = OLD.Livro_id;
-	END IF ;
+	END IF;
 END //
-
 DELIMITER ;
 
--- Ao emprestar o livro => diminuir a quantidade_disponviel
-
+-- Diminui quantidade do livro ao realizar empréstimo
 DELIMITER //
-
-CREATE TRIGGER DiminuirEmprestar
+CREATE TRIGGER diminuir_quantidade_emprestar_livro
 AFTER INSERT ON Emprestimos
 FOR EACH ROW
-
 BEGIN 
 	UPDATE Livros
     SET Quantidade_disponivel = Quantidade_disponivel - 1
     WHERE ID_livro = NEW.Livro_id;
-
 END //
-
 DELIMITER ;
 
 
+-- ============================================================
+-- ========= GATILHOS DE GERAÇÃO AUTOMÁTICA DE VALORES =========
+-- ============================================================
 
--- ===================== GATILHOS DE GERAÇÃO AUTOMÁTICA DE VALORES ====================:
-
--- preencher data inscrição
-
+-- Define data de inscrição do usuário automaticamente
 DELIMITER //
-
 CREATE TRIGGER preencher_data_incricao 
 BEFORE INSERT ON Usuarios
 FOR EACH ROW 
@@ -191,273 +171,50 @@ BEGIN
 END //
 DELIMITER ;
 
-
- DELIMITER //
- 
- 
--- Definir o status inicial do emprestimo como "pendente"
-
+-- Define status inicial do empréstimo como pendente
 DELIMITER //
-
-CREATE TRIGGER definir_emprestimo_pendente -- feito
+CREATE TRIGGER definir_emprestimo_pendente 
 BEFORE INSERT ON Emprestimos
 FOR EACH ROW
-
 BEGIN 
 	SET NEW.Status_emprestimo = 'pendente';
-
 END //
-
 DELIMITER ;
 
-
--- Preencher  a data_devolucao_real automaticamente
-
+-- Preenche data de devolução real e ajusta status automaticamente
 DELIMITER //
-
 CREATE TRIGGER definir_devolucao_real
 BEFORE UPDATE ON Emprestimos
 FOR EACH ROW
-
 BEGIN 
 	IF OLD.Status_emprestimo <> 'devolvido'
-    AND NEW.Status_emprestimo = 'devolvido' THEN
+       AND NEW.Status_emprestimo = 'devolvido' THEN
 		SET NEW.Data_devolucao_real = CURDATE();
+    ELSEIF NEW.Data_devolucao_real IS NOT NULL
+       AND OLD.Data_devolucao_real IS NULL THEN
+        SET NEW.Status_emprestimo = 'devolvido';
 	END IF;
 END //
-
 DELIMITER ;
 
-
--- Gerar a Data_devolução_prevista(+7 dias)
-
+-- Define data de devolução prevista automaticamente (+30 dias)
 DELIMITER //
-
 CREATE TRIGGER definir_devolucao_prevista
 BEFORE INSERT ON Emprestimos
 FOR EACH ROW
-
 BEGIN 
-	
 	SET NEW.Data_devolucao_prevista = data_devolucao_prevista(NEW.Data_emprestimo);
-	
 END //
-
 DELIMITER ;
 
-
+-- Inicializa multa do usuário com valor zero
 DELIMITER //
 CREATE TRIGGER definir_multa_inicial
 BEFORE INSERT ON Usuarios
 FOR EACH ROW
-
 BEGIN 
 	SET NEW.Multa_atual = 0;
 END //
-
-DELIMITER ;
-
-
-
-DELIMITER //
-CREATE TRIGGER alterar_log_livro_id_null
-BEFORE DELETE ON Livros
-FOR EACH ROW
-
-BEGIN 
-    UPDATE Log_Livros SET Livro_id = NULL WHERE Livro_id = OLD.ID_livro;
-END //
-
-DELIMITER ;
-
-
-
-
-
--- =============================================== GATILHOS DE LOG ===============================================
--- Log INSERT em empréstimos
-DELIMITER //
-CREATE TRIGGER log_emprestimo_insert --feito
-AFTER INSERT ON Emprestimos
-FOR EACH ROW
-BEGIN
-    INSERT INTO Log_Emprestimos
-    (Data_log, Operacao, Campo, Valor_Anterior, Valor_Novo, Usuario_id, Emprestimo_id)
-    VALUES
-    (
-        NOW(),
-        'INSERT',
-        'Emprestimo',
-        NULL,
-        COALESCE(NEW.Status_emprestimo, 'pendente'),
-        NEW.Usuario_id,
-        NEW.ID_emprestimo
-    );
-END//
-DELIMITER ;
-
--- Log UPDATE de status do empréstimo 
-DELIMITER //
-CREATE TRIGGER log_emprestimo_update -- feito
-AFTER UPDATE ON Emprestimos
-FOR EACH ROW
-BEGIN
-    IF COALESCE(OLD.Status_emprestimo,'') <> COALESCE(NEW.Status_emprestimo,'') THEN
-        INSERT INTO Log_Emprestimos
-        (Data_log, Operacao, Campo, Valor_Anterior, Valor_Novo, Usuario_id,Emprestimo_id)
-        VALUES
-        (
-            NOW(),
-            'UPDATE',
-            'Status_emprestimo',
-            OLD.Status_emprestimo,
-            NEW.Status_emprestimo,
-            NEW.Usuario_id,
-            NEW.ID_emprestimo
-        );
-    END IF;
-END//
-DELIMITER ;
-
--- Log DELETE em empréstimos
-DELIMITER //
-CREATE TRIGGER log_emprestimo_delete -- NÃO FEITO
-AFTER DELETE ON Emprestimos
-FOR EACH ROW
-BEGIN
-    INSERT INTO Log_Emprestimos
-    (Data_log, Operacao, Campo, Valor_Anterior, Valor_Novo, Usuario_id, Emprestimo_id)
-    VALUES
-    (
-        NOW(),
-        'DELETE',
-        NULL,
-        NULL,
-        NULL,
-        OLD.Usuario_id,
-        NULL
-    );
-
-END//
-DELIMITER ;
-
--- Log INSERT em livros
-DELIMITER //
-CREATE TRIGGER log_livro_insert
-AFTER INSERT ON Livros
-FOR EACH ROW
-BEGIN
-    INSERT INTO Log_Livros
-    (Data_log, Operacao, Livro_id, Campo, Valor_Anterior, Valor_Novo)
-    VALUES
-    (NOW(), 'INSERT', NEW.ID_livro, 'Livro', NULL, NEW.Titulo);
-END//
-DELIMITER ;
-
--- Log UPDATE em livros
-DELIMITER //
-CREATE TRIGGER log_livro_update
-AFTER UPDATE ON Livros
-FOR EACH ROW
-BEGIN
-    IF OLD.Quantidade_disponivel <> NEW.Quantidade_disponivel THEN
-        INSERT INTO Log_Livros
-        (Data_log, Operacao, Livro_id, Campo, Valor_Anterior, Valor_Novo)
-        VALUES
-        (NOW(), 'UPDATE', NEW.ID_livro, 'Quantidade_disponivel', OLD.Quantidade_disponivel, NEW.Quantidade_disponivel);
-    END IF;
-END//
-DELIMITER ;
-
-
--- Log DELETE em livros
-DELIMITER //
-CREATE TRIGGER log_livro_delete
-BEFORE DELETE ON Livros
-FOR EACH ROW
-BEGIN
-    INSERT INTO Log_Livros
-    (Data_log, Operacao, Livro_id, Campo, Valor_Anterior, Valor_Novo)
-    VALUES
-    (NOW(), 'DELETE', OLD.ID_livro, 'Livro', OLD.Titulo, NULL);
-END//
-DELIMITER ;
-
-
--- Log INSERT em usuários
-DELIMITER //
-CREATE TRIGGER log_usuario_insert
-AFTER INSERT ON Usuarios
-FOR EACH ROW
-BEGIN
-    INSERT INTO Log_Usuarios
-    (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
-    VALUES
-    (NOW(), 'INSERT', NEW.ID_usuario, 'Usuario', NULL, NEW.Nome_usuario);
-END//
-DELIMITER ;
-
--- Log UPDATE em usuários
-DELIMITER //
-CREATE TRIGGER log_usuario_update
-AFTER UPDATE ON Usuarios
-FOR EACH ROW
-BEGIN
-    IF COALESCE(OLD.Nome_usuario,'') <> COALESCE(NEW.Nome_usuario,'') THEN
-        INSERT INTO Log_Usuarios
-        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
-        VALUES
-        (NOW(), 'UPDATE', NEW.ID_usuario, 'Nome_usuario', OLD.Nome_usuario, NEW.Nome_usuario);
-    END IF;
-    IF COALESCE(OLD.Email,'') <> COALESCE(NEW.Email,'') THEN
-        INSERT INTO Log_Usuarios
-        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
-        VALUES
-        (NOW(), 'UPDATE', NEW.ID_usuario, 'Email', OLD.Email, NEW.Email);
-    END IF;
-    IF COALESCE(OLD.Numero_telefone,'') <> COALESCE(NEW.Numero_telefone,'') THEN
-        INSERT INTO Log_Usuarios
-        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
-        VALUES
-        (NOW(), 'UPDATE', NEW.ID_usuario, 'Numero_telefone', OLD.Numero_telefone, NEW.Numero_telefone);
-    END IF;
-    IF COALESCE(OLD.Data_inscricao,'0000-00-00') <> COALESCE(NEW.Data_inscricao,'0000-00-00') THEN
-        INSERT INTO Log_Usuarios
-        (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
-        VALUES
-        (NOW(), 'UPDATE', NEW.ID_usuario, 'Data_inscricao', OLD.Data_inscricao, NEW.Data_inscricao);
-    END IF;
-END//
-DELIMITER ;
-
--- Log DELETE em usuários
-DELIMITER //
-CREATE TRIGGER log_usuario_delete
-BEFORE DELETE ON Usuarios
-FOR EACH ROW
-BEGIN
-    INSERT INTO Log_Usuarios
-    (Data_log, Operacao, Usuario_id, Campo, Valor_Anterior, Valor_Novo)
-    VALUES
-    (NOW(), 'DELETE', OLD.ID_usuario, 'Usuario', OLD.Nome_usuario, NULL);
-END//
-DELIMITER ;
-
-
--- Log UPDATE de multa
-DELIMITER //
-CREATE TRIGGER log_multa_update
-AFTER UPDATE ON Usuarios
-FOR EACH ROW
-BEGIN
-    IF OLD.Multa_atual <> NEW.Multa_atual THEN
-        INSERT INTO Log_Multas
-        (Data_log, Usuario_id, Valor_Anterior, Valor_Novo)
-        VALUES
-        (NOW(), NEW.ID_usuario, OLD.Multa_atual, NEW.Multa_atual);
-    END IF;
-END//
-
 DELIMITER ;
 
 
@@ -465,13 +222,16 @@ DELIMITER ;
 
 
 
--- ==================== FUNCTIONS ====================
--- FUNÇÕES TRIGGERS
+-- ============================================================
+-- =========                 FUNÇÕES                    =========
+-- ============================================================
+
 -- 1. Definir a data de devolução prevista
 DELIMITER //
 
 CREATE FUNCTION data_devolucao_prevista(data_emprestimo DATE)
 RETURNS DATE
+
 BEGIN
 	DECLARE nova_data DATE;
     SET nova_data = data_emprestimo + INTERVAL 30 DAY;
@@ -498,7 +258,6 @@ BEGIN
     SET valor_multa = 0;
 
     IF data_real IS NOT NULL
-       AND data_real <> '0000-00-00'
        AND data_real > data_prevista THEN
 
         SET dias_atraso = DATEDIFF(data_real, data_prevista);

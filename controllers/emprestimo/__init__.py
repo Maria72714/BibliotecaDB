@@ -34,6 +34,7 @@ def cadastrar_emprestimo():
                     'Livro_id': int(id_livro)
                 })
                 conn.commit()
+                return redirect(url_for('emprestimo.listar_emprestimos'))
             
             except DBAPIError as e:
                 mensagem = e.orig.args[1]
@@ -63,7 +64,6 @@ def listar_emprestimos():
 def editar_emprestimo(id):
     with engine.connect() as conn:
         if request.method == 'POST':
-            data_emprestimo = request.form['Data_emprestimo']
             data_devolucao_prevista = request.form['Data_devolucao_prevista']
             data_devolucao_real = request.form['Data_devolucao_real']
             status_emprestimo = request.form['Status_emprestimo']
@@ -74,13 +74,11 @@ def editar_emprestimo(id):
             try:
                 conn.execute(text("""
                     UPDATE Emprestimos
-                    SET Data_emprestimo = :data_emprestimo,
-                        Data_devolucao_prevista = :data_devolucao_prevista,
+                    SET Data_devolucao_prevista = :data_devolucao_prevista,
                         Data_devolucao_real = :data_devolucao_real,
                         Status_emprestimo = :status_emprestimo
                     WHERE ID_emprestimo = :id
                 """), {
-                    "data_emprestimo": data_emprestimo,
                     "data_devolucao_prevista": data_devolucao_prevista,
                     "data_devolucao_real": data_devolucao_real,
                     "status_emprestimo": status_emprestimo,

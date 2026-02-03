@@ -13,12 +13,6 @@
       <input type="submit" value="Registrar Emprestimo">
   </form>
 
-  {% if current_user.is_authenticated %}
-    <form action="{{ url_for('emprestimo.logs_emprestimo') }}" class="btn-log">
-      <input type="submit" value="Visualizar logs">
-    </form>
-  {% endif %}
-
     <div class="tabela-wrapper">
       <table class="tabela">
         <thead>

@@ -1,288 +1,100 @@
 CREATE DATABASE db_atividade17;
 
-
-USE db_atividade17 ;
-
-
-
-
+USE db_atividade17;
 
 CREATE TABLE Autores (
-
-
     ID_autor INT AUTO_INCREMENT PRIMARY KEY,
-
-
     Nome_autor VARCHAR(255) NOT NULL,
-
-
     Nacionalidade VARCHAR(255),
-
-
     Data_nascimento DATE,
-
-
     Biografia TEXT
-
-
 );
-
-
-
-
 
 CREATE TABLE Generos (
-
-
     ID_genero INT AUTO_INCREMENT PRIMARY KEY,
-
-
     Nome_genero VARCHAR(255) NOT NULL
-
-
 );
-
-
-
-
 
 CREATE TABLE Editoras (
-
-
     ID_editora INT AUTO_INCREMENT PRIMARY KEY,
-
-
     Nome_editora VARCHAR(255) NOT NULL,
-
-
     Endereco_editora TEXT
-
-
 );
-
-
-
-
 
 CREATE TABLE Livros (
-
-
     ID_livro INT AUTO_INCREMENT PRIMARY KEY,
-
-
     Titulo VARCHAR(255) NOT NULL,
-
-
     Autor_id INT,
-
-
     ISBN VARCHAR(13) NOT NULL UNIQUE,
-
-
     Ano_publicacao INT,
-
-
     Genero_id INT,
-
-
     Editora_id INT,
-
-
     Quantidade_disponivel INT,
-
-
     Resumo TEXT,
-
-
     FOREIGN KEY (Autor_id) REFERENCES Autores(ID_autor),
-
-
     FOREIGN KEY (Genero_id) REFERENCES Generos(ID_genero),
-
-
     FOREIGN KEY (Editora_id) REFERENCES Editoras(ID_editora) ON DELETE SET NULL
-
-
 );
 
-
-
-
-
-CREATE TABLE Usuarios ( ID_usuario INT AUTO_INCREMENT PRIMARY KEY,
-
-
+CREATE TABLE Usuarios (
+    ID_usuario INT AUTO_INCREMENT PRIMARY KEY,
     Nome_usuario VARCHAR(255) NOT NULL,
-
-
     Email VARCHAR(255) UNIQUE,
-
-
-    Senha VARCHAR(255), 
-
-
+    Senha VARCHAR(255),
     Numero_telefone VARCHAR(15),
-
-
     Data_inscricao DATE,
-
-
     Multa_atual DECIMAL(10, 2)
-
-
 );
 
-
-
-
-
-CREATE TABLE Emprestimos ( 
-
-
-    ID_emprestimo INT AUTO_INCREMENT PRIMARY KEY, 
-
-
-    Usuario_id INT, 
-
-
+CREATE TABLE Emprestimos (
+    ID_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
+    Usuario_id INT,
     Livro_id INT,
-
-
-    Data_emprestimo DATE DEFAULT (current_date()),
-
-
-    Data_devolucao_prevista DATE, 
-
-
-    Data_devolucao_real DATE NULL, 
-
-
-    Status_emprestimo ENUM('pendente', 'devolvido', 'atrasado', 'cancelado') DEFAULT NULL, 
-
-
-    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario), FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro) ON DELETE SET NULL );
-
-
-
-
+    Data_emprestimo DATE DEFAULT (CURRENT_DATE()),
+    Data_devolucao_prevista DATE,
+    Data_devolucao_real DATE NULL,
+    Status_emprestimo ENUM('pendente', 'devolvido', 'atrasado', 'cancelado') DEFAULT NULL,
+    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario),
+    FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro) ON DELETE SET NULL
+);
 
 CREATE TABLE Log_Emprestimos (
-
-
     ID_log INT AUTO_INCREMENT PRIMARY KEY,
-
-
     Data_log DATETIME,
-
-
     Usuario_id INT,
-
-
     Emprestimo_id INT NULL,
-
-
     Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
-
-
     Campo VARCHAR(100),
-
-
     Valor_Anterior TEXT,
-
-
-    Valor_Novo TEXT,
-
-
-    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario) ON DELETE SET NULL,
-
-
-    FOREIGN KEY (Emprestimo_id) REFERENCES Emprestimos(ID_emprestimo) ON DELETE SET NULL
-
-
+    Valor_Novo TEXT
 );
 
-
-
-
-
-CREATE TABLE Log_Usuarios(
-
-
+CREATE TABLE Log_Usuarios (
+    ID_log INT AUTO_INCREMENT PRIMARY KEY,
     Data_log DATETIME,
-
-
     Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
-
-
     Usuario_id INT NULL,
-
-
     Campo VARCHAR(100),
-
-
     Valor_Anterior TEXT,
-
-
-    Valor_Novo TEXT,
-
-
-    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario) ON DELETE SET NULL
-
-
+    Valor_Novo TEXT
 );
 
-
-
-
-
-CREATE TABLE Log_Livros(
-
-
+CREATE TABLE Log_Livros (
+    ID_log INT AUTO_INCREMENT PRIMARY KEY,
     Data_log DATETIME,
-
-
     Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
-
-
     Livro_id INT NULL,
-
-
     Campo VARCHAR(100),
-
-
     Valor_Anterior TEXT,
-
-
-    Valor_Novo TEXT,
-
-
-    FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro) ON DELETE SET NULL
-
-
-); 
-
-
-
-
-
-CREATE TABLE Log_Multas(
-
-
-    Data_log DATETIME,
-
-
-    Usuario_id INT NULL,
-
-
-    Valor_Anterior DECIMAL(10, 2),
-
-
-    Valor_Novo DECIMAL(10, 2),
-
-
-    FOREIGN KEY (Usuario_id) REFERENCES Usuarios(ID_usuario) ON DELETE SET NULL
-
-
+    Valor_Novo TEXT
 );
 
-DELIMITER ;
+CREATE TABLE Log_Multas (
+    ID_log INT AUTO_INCREMENT PRIMARY KEY,
+    Data_log DATETIME,
+    Operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
+    Usuario_id INT NULL,
+    Campo VARCHAR(100),
+    Valor_Anterior DECIMAL(10, 2),
+    Valor_Novo DECIMAL(10, 2)
+);

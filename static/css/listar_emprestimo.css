@@ -78,31 +78,32 @@
     gap: 8px;
   }
   
-.btn-registro {
-  display: flex;
-  float: right;
-  margin-bottom: 5px;
-  color: #007bff;
 
+
+.btn-registro input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.btn-log {
-  display: flex;
-  float: right;
-  width: 120px;
-  margin-right: 10px;
-  margin-bottom: 5px;
-  color: #007bff;
-
+.btn-registro input[type="submit"]:hover {
+    background-color: #0056b3;
 }
 
 input { 
   background-color:#316aa8 ;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 16px;
   text-decoration: none;
-  width: 160px;
+  width: 170px;
   height: 30px;
+  margin-bottom: 12px;
   border-radius: 10px;
   color: white;
   border: 0;
